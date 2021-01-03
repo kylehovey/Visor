@@ -24,7 +24,6 @@
     "express": "^4.17.1",
     "graphql": "^14.0.0",
     "graphql-subscriptions": "^1.1.0",
-    "helmet": "^4.3.1",
     "morgan": "^1.10.0",
     "pg": "^8.5.1",
     "pg-hstore": "^2.3.3",
