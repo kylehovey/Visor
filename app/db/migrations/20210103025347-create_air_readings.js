@@ -3,14 +3,11 @@ module.exports = {
     'air_readings',
     {
       id: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.BIGINT,
         primaryKey: true,
         autoIncrement: true,
       },
       createdAt: {
-        type: Sequelize.DATE,
-      },
-      updatedAt: {
         type: Sequelize.DATE,
       },
       pm25: Sequelize.INTEGER,
