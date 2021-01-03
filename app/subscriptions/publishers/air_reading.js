@@ -9,10 +9,10 @@ const serialPort = new SerialPort(serialPath, { baudRate: 9600 });
 const parser = new Readline();
 serialPort.pipe(parser);
 
-parser.on('data', data => {
-  const pm25Value = parseInt(data);
+parser.on('data', (data) => {
+  const pm25Value = parseInt(data, 10);
 
-  if (!isNaN(pm25Value)) {
+  if (!Number.isNaN(pm25Value)) {
     const payload = {
       pm25: pm25Value,
     };
