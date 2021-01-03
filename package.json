@@ -28,7 +28,8 @@
     "morgan": "^1.10.0",
     "pg": "^8.5.1",
     "pg-hstore": "^2.3.3",
-    "sequelize": "^6.3.5"
+    "sequelize": "^6.3.5",
+    "serialport": "^9.0.4"
   },
   "devDependencies": {
     "eslint": "^7.17.0",
