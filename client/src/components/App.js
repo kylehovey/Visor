@@ -37,7 +37,7 @@ const App = () => {
           <div className="description">
             <h2>Tomahna Environment Statistics</h2>
           </div>
-          <Chart title="Air Quality" values={history} units="ug/m3" />
+          <Chart title="Air Quality" values={history} units="µg/m³" />
         </div>
       </div>
     </div>
