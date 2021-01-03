@@ -30,7 +30,7 @@ if (process.env.NODE_ENV === 'production') {
       topics.AIR_READING_TOPIC,
       {
         airReading: {
-          pm25: Number.parseInt(Math.random() * 50, 10),
+          pm25: Number.parseInt(Math.sin(+(new Date)/5000) * 50 + 50, 10),
         },
       },
     );
