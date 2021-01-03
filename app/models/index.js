@@ -1,8 +1,8 @@
 const Sequelize = require('sequelize');
 const connector = require('./connector');
 
-const Things = connector.define('thing', {
-  name: Sequelize.STRING,
+const AirReadings = connector.define('air_reading', {
+  pm25: Sequelize.INTEGER,
 });
 
-module.exports = { Things };
+module.exports = { AirReadings };

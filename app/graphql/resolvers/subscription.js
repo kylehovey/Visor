@@ -1,9 +1,9 @@
 const Subscription = {
-  randomNumber: {
+  airReading: {
     subscribe: (root, variables, context) => {
       const { pubsub, topics } = context;
 
-      return pubsub.asyncIterator([topics.RANDOM_NUMBER_TOPIC]);
+      return pubsub.asyncIterator([topics.AIR_READING_TOPIC]);
     },
   },
 };

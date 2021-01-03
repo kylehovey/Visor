@@ -1,0 +1,89 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background-color: #3b3b3b;
+  color: #f3f3f3;
+}
+
+a {
+  text-decoration: none;
+}
+
+p.active {
+  color: #fff;
+  font-weight: bold;
+}
+
+span.name {
+  text-transform: capitalize;
+}
+
+span.value {
+  color: salmon;
+}
+
+.App {
+  text-align: center;
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  background-color: #3b3b3b;
+  color: #f3f3f3; }
+
+div.container {
+  height: 100%;
+  line-height: 150%;
+  min-width: 490px; }
+  div.container div.main {
+    flex: 1 1; }
+  div.container div.content {
+    min-height: calc(100% - 140px);
+    display: flex;
+    padding: 40px;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto; }
+    div.container div.content div.description {
+      margin-bottom: 40px; }
+      div.container div.content div.description a.logo {
+        width: 64px;
+        height: 64px;
+        background-position: center;
+        background-size: cover;
+        display: inline-block; }
+  div.container ul.stats-list {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -20px;
+    justify-content: flex-start; }
+    div.container ul.stats-list li {
+      list-style: none;
+      width: 180px;
+      transition: 0.5s;
+      background-color: initial;
+      margin: 0 20px;
+      margin-bottom: 20px; }
+      div.container ul.stats-list li.active {
+        background-color: #4b4b4b;
+      }
+      div.container ul.stats-list li:hover {
+        background-color: #4b4b4b;
+        transition: 0.5s;
+        cursor: pointer; }
+      div.container ul.stats-list li a {
+        color: #f3f3f3;
+        text-decoration: none;
+        padding: 10px;
+        margin: 0px;
+        margin-bottom: 20px;
+        display: block; }
+        div.container ul.stats-list li a span {
+          display: block; }
+          div.container ul.stats-list li a span.name {
+            font-weight: bold; }
+          div.container ul.stats-list li a span.value {
+            font-size: 90%;
+            line-height: 130%; }
+

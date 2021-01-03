@@ -1,3 +1,3 @@
 module.exports = {
-  RANDOM_NUMBER_TOPIC: 'random_number',
+  AIR_READING_TOPIC: 'air_reading',
 };

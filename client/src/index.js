@@ -11,6 +11,7 @@ import {
 } from '@apollo/client';
 
 import './style/index.scss';
+import './style/react-vis.css';
 
 import App from './components/App';
 

@@ -1,27 +1,24 @@
 const { gql } = require('apollo-server');
 
 const typeDefs = gql`
-  type HelloWorld {
-    hello: String
-  }
+  scalar Date
 
-  type Thing {
+  type AirReading {
     id: ID!
-    name: String
+    pm25: Int
+    createdAt: Date
   }
 
   type Query {
-    helloWorld: HelloWorld
-    things: [Thing]
+    status: Boolean!
   }
 
   type Subscription {
-    randomNumber: Float
+    airReading: AirReading
   }
 
   type Mutation {
-    makeThing(name: String!): Thing
-    deleteThing(id: ID!): Thing
+    nothing: Boolean
   }
 `;
 
