@@ -14,7 +14,10 @@ export const GET_AIR_READING = gql`
 const App = () => {
   const [ history, setHistory ] = useState([]);
 
-  const { error: subscriptionError } = useSubscription(GET_AIR_READING, {
+  const {
+    loading: subscriptionLoading,
+    error: subscriptionError,
+  } = useSubscription(GET_AIR_READING, {
     onSubscriptionData: ({ subscriptionData }) => {
       const {
         data: {
@@ -28,6 +31,7 @@ const App = () => {
     },
   });
 
+  if (subscriptionLoading) return 'Loading...';
   if (subscriptionError) return JSON.stringify(subscriptionError);
 
   return (

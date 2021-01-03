@@ -6,39 +6,32 @@ import {
 } from '@testing-library/react';
 
 import App, {
-  GET_INDEX,
-  MAKE_THING,
-  DELETE_THING,
-  RANDOM_NUMBER
+  GET_AIR_READING,
 } from './App';
-
-const things = ['fish','cat','dog'].map((name, id) => ({ id, name }));
 
 const mocks = [{
   request: {
-    query: GET_INDEX,
+    query: GET_AIR_READING,
   },
   result: {
     data: {
-      helloWorld: {
-        hello: "Hello World",
+      airReading: {
+        pm25: 3,
       },
-      things,
-    },
-  },
-},{
-  request: {
-    query: RANDOM_NUMBER,
-  },
-  result: {
-    data: {
-      randomNumber: Math.random(),
     },
   },
 }];
 
-test('renders hello world', async () => {
+test('renders the app', async () => {
   const [ { result } ] = mocks;
+
+  const {
+    data: {
+      airReading: {
+        pm25,
+      },
+    },
+  } = result;;
 
   render(
     <MockedProvider mocks={mocks} addTypename={false}>
@@ -50,5 +43,5 @@ test('renders hello world', async () => {
 
   await waitForElementToBeRemoved(() => screen.queryByText(/loading/i));
 
-  expect(screen.getByText(result.data.helloWorld.hello)).toBeInTheDocument(1);
+  expect(screen.getByText(`Current Value: ${pm25}µg/m³`)).toBeInTheDocument(1);
 });
