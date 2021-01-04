@@ -11,26 +11,29 @@ if (process.env.NODE_ENV === 'production') {
   serialPort.pipe(parser);
 
   parser.on('data', (data) => {
-    const pm25Value = parseInt(data, 10);
-
-    if (!Number.isNaN(pm25Value)) {
-      const payload = {
-        pm25: pm25Value,
-      };
-
+    try {
       pubsub.publish(
         topics.AIR_READING_TOPIC,
-        { airReading: payload },
+        { airReading: JSON.parse(data) },
       );
+    } catch (err) {
+      console.error(`Error parsing data: ${data}`);
     }
   });
 } else {
   setInterval(() => {
+    const mockValue = Number.parseInt(
+      Math.sin(+(new Date)/5000) * 50 + 50,
+      10,
+    );
+
     pubsub.publish(
       topics.AIR_READING_TOPIC,
       {
         airReading: {
-          pm25: Number.parseInt(Math.sin(+(new Date)/5000) * 50 + 50, 10),
+          pm10: Math.round(mockValue / 10),
+          pm25: Math.round(mockValue / 2),
+          pm100: mockValue,
         },
       },
     );

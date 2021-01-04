@@ -4,9 +4,9 @@ const typeDefs = gql`
   scalar Date
 
   type AirReading {
-    id: ID!
+    pm10: Int
     pm25: Int
-    createdAt: Date
+    pm100: Int
   }
 
   type Query {

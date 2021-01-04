@@ -19,10 +19,13 @@ const Chart = ({ title, values, units }) => {
         <YAxis title={units} />
         <HorizontalGridLines />
         <VerticalGridLines />
-        <LineSeries
-          data={asVis(values)}
-          curve="curveMonotoneX"
-        />
+        {values.map((data, i) => (
+          <LineSeries
+            key={`${title}-${i}`}
+            data={asVis(data)}
+            curve="curveMonotoneX"
+          />
+        ))}
       </XYPlot>
     </div>
   );
@@ -31,7 +34,9 @@ const Chart = ({ title, values, units }) => {
 Chart.propTypes = {
   title: PropTypes.string.isRequired,
   units: PropTypes.string.isRequired,
-  values: PropTypes.arrayOf(PropTypes.number).isRequired,
+  values: PropTypes.arrayOf(
+    PropTypes.arrayOf(PropTypes.number),
+  ).isRequired,
 };
 
 export default Chart;
