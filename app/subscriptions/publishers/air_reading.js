@@ -10,12 +10,17 @@ if (process.env.NODE_ENV === 'production') {
   const parser = new Readline();
   serialPort.pipe(parser);
 
-  parser.on('data', (data) => {
-    pubsub.publish(
-      topics.AIR_READING_TOPIC,
-      { airReading: JSON.parse(data) },
-    );
-  });
+  try {
+    parser.on('data', (data) => {
+      pubsub.publish(
+        topics.AIR_READING_TOPIC,
+        { airReading: JSON.parse(data) },
+      );
+    });
+  } catch (err) {
+    /* eslint-disable-next-line no-console */
+    console.log(err);
+  }
 } else {
   setInterval(() => {
     const mockValue = Number.parseInt(

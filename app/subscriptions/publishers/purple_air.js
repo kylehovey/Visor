@@ -13,7 +13,11 @@ setInterval(() => {
           out += d;
         });
         res.on('end', () => {
-          resolve(JSON.parse(out));
+          try {
+            resolve(JSON.parse(out));
+          } catch (err) {
+            reject(err);
+          }
         });
         res.on('error', reject);
       },
@@ -41,5 +45,6 @@ setInterval(() => {
         },
       },
     );
-  });
+    /* eslint-disable-next-line no-console */
+  }).catch(console.log);
 }, 5e3);
