@@ -10,7 +10,7 @@ import {
 
 const asVis = values => values.map((y, x) => ({ x, y }));
 
-const Chart = ({ title, values, units }) => {
+const Chart = ({ title, values, units, color }) => {
   return (
     <div>
       <h3>{title}</h3>
@@ -24,6 +24,7 @@ const Chart = ({ title, values, units }) => {
             key={`${title}-${i}`}
             data={asVis(data)}
             curve="curveMonotoneX"
+            color={color}
           />
         ))}
       </XYPlot>
@@ -33,6 +34,7 @@ const Chart = ({ title, values, units }) => {
 
 Chart.propTypes = {
   title: PropTypes.string.isRequired,
+  color: PropTypes.string.isRequired,
   units: PropTypes.string.isRequired,
   values: PropTypes.arrayOf(
     PropTypes.arrayOf(PropTypes.number),

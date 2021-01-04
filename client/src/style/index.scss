@@ -1,11 +1,13 @@
 $bg: #3b3b3b;
 $bg-l: #4b4b4b;
+$bg-ld: #404040;
 $fg: #f3f3f3;
 
 body {
   background-color: $bg;
   color: $fg;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  line-height: 150%;
 }
 
 div.container {
@@ -13,6 +15,25 @@ div.container {
 
     div.grid-module-content {
       margin: 10px;
+    }
+
+    div.average-container {
+      text-align: center;
+
+      span.average-content {
+        font-weight: bold;
+      }
+
+      div.average-value-container {
+        margin-top: 8px;
+
+        span.average-value {
+          font-weight: bold;
+          font-size: 1.5em;
+          background-color: $bg-ld;
+          padding: 5px;
+        }
+      }
     }
 
     .layout {
