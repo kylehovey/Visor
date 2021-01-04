@@ -1,5 +1,3 @@
-const { withFilter } = require('graphql-subscriptions');
-
 const Subscription = {
   purpleAir: {
     subscribe: (root, variables, context) => {

@@ -79,17 +79,16 @@ const App = () => {
       const {
         data: {
           purpleAir: {
-            lakemontPines,
+            lakemontPines: {
+              pm25,
+            },
           },
         },
       } = subscriptionData;
-      const { pm25 } = lakemontPines;
-      console.log({ lakemontPines });
 
       const time = new Date().getTime();
 
       setOutsidePm25History([...outsidePm25History, { value: pm25, time }]);
-
       setCurrentOutsidePm25(pm25);
     },
   });

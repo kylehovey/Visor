@@ -11,19 +11,15 @@ if (process.env.NODE_ENV === 'production') {
   serialPort.pipe(parser);
 
   parser.on('data', (data) => {
-    try {
-      pubsub.publish(
-        topics.AIR_READING_TOPIC,
-        { airReading: JSON.parse(data) },
-      );
-    } catch (err) {
-      console.error(`Error parsing data: ${data}`);
-    }
+    pubsub.publish(
+      topics.AIR_READING_TOPIC,
+      { airReading: JSON.parse(data) },
+    );
   });
 } else {
   setInterval(() => {
     const mockValue = Number.parseInt(
-      Math.sin(+(new Date)/5000) * 50 + 50,
+      Math.sin(+(new Date()) / 5000) * 50 + 50,
       10,
     );
 
