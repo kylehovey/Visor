@@ -6,9 +6,11 @@ import GridLayout from "react-grid-layout";
 import AirChart from './modules/air_quality';
 import Average from './modules/average';
 
-const pm10Color = "#9e2a2b";
-const pm25Color = "#83194d";
-const pm100Color = "#ff8800";
+const pm10Color = "rgb(245, 126, 127)";
+const pm25Color = "rgb(239, 129, 255)";
+const pm100Color = "rgb(255, 169, 71)";
+
+const valuesOf = (data) => data.map(({ value }) => value);
 
 export const GET_AIR_READING = gql`
   subscription AirReading {
@@ -36,7 +38,6 @@ const App = () => {
   ].map((base, i) => ({ ...base, i: i.toString() })));
 
   const {
-    loading: subscriptionLoading,
     error: subscriptionError,
   } = useSubscription(GET_AIR_READING, {
     onSubscriptionData: ({ subscriptionData }) => {
@@ -47,9 +48,11 @@ const App = () => {
       } = subscriptionData;
       const { pm10, pm25, pm100 } = airReading;
 
-      setPm10History([...pm10History, pm10]);
-      setPm25History([...pm25History, pm25]);
-      setPm100History([...pm100History, pm100]);
+      const time = new Date().getTime();
+
+      setPm10History([...pm10History, { value: pm10, time }]);
+      setPm25History([...pm25History, { value: pm25, time }]);
+      setPm100History([...pm100History, { value: pm100, time }]);
       setCurrent(airReading);
     },
   });
@@ -66,19 +69,19 @@ const App = () => {
       </div>
     ),
     () => <Average
-      values={pm10History}
+      values={valuesOf(pm10History)}
       title="PM1.0"
       units="µg/m³"
       color={pm25Color}
     />,
     () => <Average
-      values={pm25History}
+      values={valuesOf(pm25History)}
       title="PM2.5"
       units="µg/m³"
       color={pm10Color}
     />,
     () => <Average
-      values={pm100History}
+      values={valuesOf(pm100History)}
       title="PM10.0"
       units="µg/m³"
       color={pm100Color}

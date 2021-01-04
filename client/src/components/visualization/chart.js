@@ -8,14 +8,18 @@ import {
   VerticalGridLines,
 } from 'react-vis';
 
-const asVis = values => values.map((y, x) => ({ x, y }));
+const asVis = values => values.map(({ value: y, time: x }) => ({ x, y }));
 
 const Chart = ({ title, values, units, color }) => {
   return (
     <div>
       <h3>{title}</h3>
-      <XYPlot height={300} width={800}>
-        <XAxis title="seconds" />
+      <XYPlot
+        xType="time"
+        height={300}
+        width={800}
+      >
+        <XAxis />
         <YAxis title={units} />
         <HorizontalGridLines />
         <VerticalGridLines />
