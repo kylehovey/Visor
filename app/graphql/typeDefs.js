@@ -9,12 +9,17 @@ const typeDefs = gql`
     pm100: Int
   }
 
+  type PurpleAir {
+    lakemontPines: AirReading
+  }
+
   type Query {
     status: Boolean!
   }
 
   type Subscription {
     airReading: AirReading
+    purpleAir: PurpleAir
   }
 
   type Mutation {

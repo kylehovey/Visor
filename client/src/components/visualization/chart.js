@@ -41,7 +41,12 @@ Chart.propTypes = {
   color: PropTypes.string.isRequired,
   units: PropTypes.string.isRequired,
   values: PropTypes.arrayOf(
-    PropTypes.arrayOf(PropTypes.number),
+    PropTypes.arrayOf(
+      PropTypes.shape({
+        value: PropTypes.number.isRequired,
+        time: PropTypes.number.isRequired,
+      }),
+    ),
   ).isRequired,
 };
 
