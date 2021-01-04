@@ -93,7 +93,7 @@ const App = () => {
     },
   });
 
-  if (current === null) return 'Loading...';
+  if (current === null || currentOutsidePm25 === null) return 'Loading...';
   if (airSensorError) return JSON.stringify(airSensorError);
   if (purpleAirError) return JSON.stringify(purpleAirError);
 
@@ -162,7 +162,7 @@ const App = () => {
           layout={layout}
           onLayoutChange={setLayout}
           className="layout"
-          verticalCompact={false}
+          compactType={null}
         >
           {modules.map(({ key, component }) => (
             <div
