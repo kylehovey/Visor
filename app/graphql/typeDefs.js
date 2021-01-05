@@ -40,7 +40,7 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    nothing: Boolean
+    setTradfriStatus(id: String!, type: TradfriDeviceType!, status: Int!): Boolean
   }
 `;
 

@@ -44,6 +44,22 @@ class Client extends TradfriClient {
     return status;
   }
 
+  async setBulbStatus(bulbId, status) {
+    return this.request(
+      `/15001/${bulbId}`,
+      'put',
+      { 3311: [{ 5851: status }] },
+    );
+  }
+
+  async setPlugStatus(plugId, status) {
+    return this.request(
+      `/15001/${plugId}`,
+      'put',
+      { 3312: [{ 5850: status }] },
+    );
+  }
+
   async getAllDevices() {
     const deviceIds = await this.getAllDeviceIds();
 
@@ -81,43 +97,8 @@ class Client extends TradfriClient {
       })
     );
 
-    const bulbs = devices
-      .filter(({ type }) => type === 'bulb')
-      .map(({ id, ...rest }) => ({
-        id,
-        getStatus: async () => {
-          const {
-           3311: [{ 5851: status }],
-          } = await this.getStatusOf(id);
-
-          return status;
-        },
-        setStatus: (value) => this.request(
-          `/15001/${id}`,
-          'put',
-          { 3311: [{ 5851: value }] },
-        ),
-        ...rest,
-      }));
-
-    const plugs = devices
-      .filter(({ type }) => type === 'plug')
-      .map(({ id, ...rest }) => ({
-        id,
-        getStatus: async () => {
-          const {
-           3312: [{ 5850: status }],
-          } = await this.getStatusOf(id);
-
-          return status;
-        },
-        setStatus: (value) => this.request(
-          `/15001/${id}`,
-          'put',
-          { 3312: [{ 5850: value }] },
-        ),
-        ...rest,
-      }));
+    const bulbs = devices.filter(({ type }) => type === 'bulb');
+    const plugs = devices.filter(({ type }) => type === 'plug');
 
     return { plugs, bulbs };
   }
