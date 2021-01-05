@@ -14,7 +14,13 @@ const psk = process.env.TRADFRI_PSK;
  */
 class Client extends TradfriClient {
   static async discoverAndBuild() {
-    const tradfri = new Client(address);
+    const gatewayAddress = address === undefined
+      ? (
+        ({ name, addresses: [address] }) => address
+      )(await discoverGateway())
+      : address;
+
+    const tradfri = new Client(gatewayAddress);
     await tradfri.connect(identity, psk);
 
     return tradfri;
