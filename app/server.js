@@ -5,22 +5,22 @@ const express = require('express');
 const http = require('http');
 const morgan = require('morgan');
 
-const { pubsub, topics } = require('./subscriptions');
+const buildApolloWith = require('./graphql');
 
+const { pubsub, topics } = require('./subscriptions');
 const models = require('./models');
+const tradfriPromise = require('./lib/tradfri');
 
 const app = express();
 const server = http.createServer(app);
 
 (async () => {
-  const tradfriClient = await require('./lib/tradfri');
-
-  const apollo = require('./graphql')({
+  const apollo = buildApolloWith({
     context: {
       models,
       pubsub,
       topics,
-      tradfriClient,
+      tradfriClient: await tradfriPromise,
     },
   });
 

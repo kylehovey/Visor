@@ -1,7 +1,7 @@
 const {
   TradfriClient,
-  discoverGateway
-} = require("node-tradfri-client");
+  discoverGateway,
+} = require('node-tradfri-client');
 
 const address = process.env.TRADFRI_IP;
 const identity = process.env.TRADFRI_IDENTITY;
@@ -15,9 +15,7 @@ const psk = process.env.TRADFRI_PSK;
 class Client extends TradfriClient {
   static async discoverAndBuild() {
     const gatewayAddress = address === undefined
-      ? (
-        ({ name, addresses: [address] }) => address
-      )(await discoverGateway())
+      ? (({ addresses: [found] }) => found)(await discoverGateway())
       : address;
 
     const tradfri = new Client(gatewayAddress);
@@ -69,34 +67,39 @@ class Client extends TradfriClient {
       deviceIds.map(async (id) => {
         const {
           9001: name,
-          3: {
-            1: info,
-          },
+          3: { 1: info },
           3311: bulbStatus,
           3312: plugStatus,
         } = await this.getStatusOf(id);
 
-        const type = (_info => {
+        const type = ((_info) => {
           if (/bulb/.test(_info)) return 'bulb';
           if (/outlet/.test(_info)) return 'plug';
 
           throw new Error('Unexpected device encountered');
         })(info);
 
-        const base = { id, name, info, type };
+        const base = {
+          id,
+          name,
+          info,
+          type,
+        };
 
         if (type === 'bulb') {
           const [{ 5851: status }] = bulbStatus;
 
           return { ...base, status };
-        } else if (type === 'plug') {
+        }
+
+        if (type === 'plug') {
           const [{ 5850: status }] = plugStatus;
 
           return { ...base, status };
-        } else {
-          throw new Error('Unhandled device type');
         }
-      })
+
+        throw new Error('Unhandled device type');
+      }),
     );
 
     const bulbs = devices.filter(({ type }) => type === 'bulb');

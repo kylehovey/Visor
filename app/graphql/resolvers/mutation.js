@@ -13,6 +13,7 @@ const Mutation = {
 
       return true;
     } catch (error) {
+      /* eslint-disable-next-line no-console */
       console.log(error);
 
       return false;
