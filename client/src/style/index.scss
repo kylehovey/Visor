@@ -2,6 +2,8 @@ $bg: #3b3b3b;
 $bg-l: #4b4b4b;
 $bg-ld: #404040;
 $fg: #f3f3f3;
+$active: #579275;
+$inactive: #943f3f;
 
 body {
   background-color: $bg;
@@ -15,6 +17,24 @@ div.container {
 
     div.grid-module-content {
       margin: 10px;
+    }
+
+    div.tradfri-toggle-container {
+      button {
+        text-transform: capitalize;
+        border: none;
+        display: block;
+        width: 70px;
+        height: 50px;
+
+        &.on {
+          background-color: $active;
+        }
+
+        &.off {
+          background-color: $inactive;
+        }
+      }
     }
 
     div.average-container {

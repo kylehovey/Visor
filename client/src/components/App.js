@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { useSubscription, gql } from '@apollo/client';
+import { useQuery, useSubscription, gql } from '@apollo/client';
 
 import GridLayout from "react-grid-layout";
 
 import AirChart from './modules/air_quality';
 import Average from './modules/average';
+import TradfriToggle from './modules/tradfri_toggle';
 
 const pm10Color = "rgb(245, 126, 127)";
 const pm25Color = "rgb(239, 129, 255)";
@@ -35,6 +36,25 @@ export const GET_PURPLE_AIR = gql`
   }
 `;
 
+export const GET_TRADFRI_DEVICES = gql`
+  query Tradfri {
+    tradfriDevices {
+      bulbs {
+        id,
+        name,
+        type,
+        status
+      }
+      plugs {
+        id,
+        name,
+        type,
+        status
+      }
+    }
+  }
+`;
+
 const App = () => {
   const [ current, setCurrent ] = useState(null);
   const [ currentOutsidePm25, setCurrentOutsidePm25 ] = useState(null);
@@ -45,15 +65,17 @@ const App = () => {
   const [ layout, setLayout ] = useState([
     { x: 0, y: 0, w: 1, h: 2 },
 
-    { x: 1, y: 0, w: 1, h: 2 },
-    { x: 2, y: 0, w: 1, h: 2 },
-    { x: 3, y: 0, w: 1, h: 2 },
-    { x: 4, y: 0, w: 1, h: 2 },
+    { x: 1, y: 0, w: 2, h: 2 },
+    { x: 3, y: 0, w: 2, h: 2 },
+    { x: 5, y: 0, w: 2, h: 2 },
+    { x: 7, y: 0, w: 2, h: 2 },
 
-    { x: 0, y: 2, w: 4, h: 9 },
-    { x: 4, y: 2, w: 4, h: 9 },
-    { x: 0, y: 11, w: 4, h: 9 },
-    { x: 4, y: 11, w: 4, h: 9 },
+    { x: 0, y: 4, w: 8, h: 9 },
+    { x: 8, y: 4, w: 8, h: 9 },
+    { x: 0, y: 13, w: 8, h: 9 },
+    { x: 8, y: 13, w: 8, h: 9 },
+
+    ...(new Array(9)).fill().map((_, x) => ({ x, y: 2, w: 1, h: 2 })),
   ].map((base, i) => ({ ...base, i: i.toString() })));
 
   const { error: airSensorError, } = useSubscription(GET_AIR_READING, {
@@ -93,11 +115,24 @@ const App = () => {
     },
   });
 
-  if (current === null || currentOutsidePm25 === null) return 'Loading...';
+  const {
+    loading: tradfriLoading,
+    error: tradfriError,
+    data: tradfriData,
+  } = useQuery(GET_TRADFRI_DEVICES);
+
+  if (tradfriLoading || current === null) return 'Loading...';
   if (airSensorError) return JSON.stringify(airSensorError);
   if (purpleAirError) return JSON.stringify(purpleAirError);
+  if (tradfriError) return JSON.stringify(tradfriError);
 
   const { pm10, pm25, pm100 } = current;
+  const {
+    tradfriDevices: {
+      bulbs,
+      plugs,
+    },
+  } = tradfriData;
 
   const modules = [
     () => (
@@ -105,6 +140,7 @@ const App = () => {
         <h3>Tomahna Statistics</h3>
       </div>
     ),
+
     () => <Average
       values={valuesOf(pm10History)}
       title="PM1.0"
@@ -129,6 +165,7 @@ const App = () => {
       units="µg/m³"
       color={outsidePm25Color}
     />,
+
     () => <AirChart
       title={`PM1.0: ${pm10}µg/m³`}
       values={pm10History}
@@ -149,6 +186,20 @@ const App = () => {
       values={outsidePm25History}
       color={outsidePm25Color}
     />,
+
+    ...bulbs.map((bulb) => () => (
+      <TradfriToggle
+        key={`tradfri-${bulb.id}`}
+        {...bulb}
+      />
+    )),
+
+    ...plugs.map((plug) => () => (
+      <TradfriToggle
+        key={`tradfri-${plug.id}`}
+        {...plug}
+      />
+    )),
   ].map((component, i) => ({ component, key: `${i}` }));
 
   return (
@@ -158,7 +209,7 @@ const App = () => {
           items={layout.length}
           rowHeight={30}
           width={2500}
-          cols={12}
+          cols={24}
           layout={layout}
           onLayoutChange={setLayout}
           className="layout"
