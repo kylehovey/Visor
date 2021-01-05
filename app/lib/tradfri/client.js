@@ -3,6 +3,7 @@ const {
   discoverGateway
 } = require("node-tradfri-client");
 
+const address = process.env.TRADFRI_IP;
 const identity = process.env.TRADFRI_IDENTITY;
 const psk = process.env.TRADFRI_PSK;
 
@@ -13,11 +14,6 @@ const psk = process.env.TRADFRI_PSK;
  */
 class Client extends TradfriClient {
   static async discoverAndBuild() {
-    const {
-      name,
-      addresses: [address],
-    } = await discoverGateway();
-
     const tradfri = new Client(address);
     await tradfri.connect(identity, psk);
 
