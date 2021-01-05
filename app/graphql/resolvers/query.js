@@ -1,6 +1,8 @@
 const Query = {
-  status() {
-    return true;
+  async tradfriDevices(root, variables, context) {
+    const { tradfriClient } = context;
+
+    return tradfriClient.getAllDevices();
   },
 };
 

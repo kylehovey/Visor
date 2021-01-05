@@ -6,25 +6,32 @@ const http = require('http');
 const morgan = require('morgan');
 
 const { pubsub, topics } = require('./subscriptions');
+
 const models = require('./models');
-const apollo = require('./graphql')({
-  context: {
-    models,
-    pubsub,
-    topics,
-  },
-});
 
 const app = express();
 const server = http.createServer(app);
 
-if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('tiny'));
-}
+(async () => {
+  const tradfriClient = await require('./lib/tradfri');
 
-app.use(express.static(path.join(__dirname, '../client/build')));
+  const apollo = require('./graphql')({
+    context: {
+      models,
+      pubsub,
+      topics,
+      tradfriClient,
+    },
+  });
 
-apollo.applyMiddleware({ app });
-apollo.installSubscriptionHandlers(server);
+  if (process.env.NODE_ENV === 'development') {
+    app.use(morgan('tiny'));
+  }
 
-server.listen(process.env.PORT);
+  app.use(express.static(path.join(__dirname, '../client/build')));
+
+  apollo.applyMiddleware({ app });
+  apollo.installSubscriptionHandlers(server);
+
+  server.listen(process.env.PORT);
+})();

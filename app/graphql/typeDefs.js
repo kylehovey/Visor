@@ -3,6 +3,23 @@ const { gql } = require('apollo-server');
 const typeDefs = gql`
   scalar Date
 
+  enum TradfriDeviceType {
+    plug
+    bulb
+  }
+
+  type TradfriDevice {
+    id: ID
+    name: String
+    type: TradfriDeviceType
+    status: Int
+  }
+
+  type TradfriDeviceResult {
+    bulbs: [TradfriDevice]
+    plugs: [TradfriDevice]
+  }
+
   type AirReading {
     pm10: Int
     pm25: Int
@@ -14,7 +31,7 @@ const typeDefs = gql`
   }
 
   type Query {
-    status: Boolean!
+    tradfriDevices: TradfriDeviceResult
   }
 
   type Subscription {
