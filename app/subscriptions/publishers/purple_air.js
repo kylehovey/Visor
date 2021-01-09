@@ -12,24 +12,20 @@ const run = () => axios
         pm10_0_atm: rawPm100,
       }],
     },
-  }) => {
-    const pm10 = Math.round(parseFloat(rawPm10));
-    const pm25 = Math.round(parseFloat(rawPm25));
-    const pm100 = Math.round(parseFloat(rawPm100));
-
-    pubsub.publish(
-      topics.PURPLE_AIR_TOPIC,
-      {
-        purpleAir: {
-          lakemontPines: {
-            pm10,
-            pm25,
-            pm100,
-          },
+  }) => [rawPm10, rawPm25, rawPm100])
+  .then((data) => data.map((x) => Math.round(parseFloat(x))))
+  .then(([pm10, pm25, pm100]) => pubsub.publish(
+    topics.PURPLE_AIR_TOPIC,
+    {
+      purpleAir: {
+        lakemontPines: {
+          pm10,
+          pm25,
+          pm100,
         },
       },
-    );
-  })
+    },
+  ))
   /* eslint-disable-next-line no-console */
   .catch(console.log)
   .then(() => new Promise((r) => setTimeout(r, 5000)))
