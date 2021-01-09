@@ -1,33 +1,17 @@
-const https = require('https');
+const axios = require('axios');
 
 const { pubsub, topics } = require('..');
 
-setInterval(() => {
-  new Promise((resolve, reject) => {
-    https.get(
-      'https://www.purpleair.com/json?show=30051',
-      (res) => {
-        let out = '';
-
-        res.on('data', (d) => {
-          out += d;
-        });
-        res.on('end', () => {
-          try {
-            resolve(JSON.parse(out));
-          } catch (err) {
-            reject(err);
-          }
-        });
-        res.on('error', reject);
-      },
-    );
-  }).then(({
-    results: [{
-      pm1_0_atm: rawPm10,
-      pm2_5_atm: rawPm25,
-      pm10_0_atm: rawPm100,
-    }],
+const run = () => axios
+  .get('https://www.purpleair.com/json?show=30051')
+  .then(({
+    data: {
+      results: [{
+        pm1_0_atm: rawPm10,
+        pm2_5_atm: rawPm25,
+        pm10_0_atm: rawPm100,
+      }],
+    },
   }) => {
     const pm10 = Math.round(parseFloat(rawPm10));
     const pm25 = Math.round(parseFloat(rawPm25));
@@ -45,6 +29,10 @@ setInterval(() => {
         },
       },
     );
-    /* eslint-disable-next-line no-console */
-  }).catch(console.log);
-}, 5e3);
+  })
+  /* eslint-disable-next-line no-console */
+  .catch(console.log)
+  .then(() => new Promise((r) => setTimeout(r, 5000)))
+  .then(run);
+
+run();
