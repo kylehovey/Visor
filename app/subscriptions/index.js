@@ -7,3 +7,4 @@ const pubsub = new PubSub();
 module.exports = { pubsub, topics };
 
 require('./publishers');
+require('./chroniclers');
