@@ -18,7 +18,7 @@ let samples = 0;
 const stow = () => {
   const { pm10, pm25, pm100 } = average;
 
-  models.AirReadings.create({
+  models.AirReading.create({
     pm10: Math.round(pm10),
     pm25: Math.round(pm25),
     pm100: Math.round(pm100),

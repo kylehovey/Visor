@@ -6,6 +6,7 @@ const { resolvers } = require('./resolvers');
 module.exports = (extras = {}) => new ApolloServer({
   typeDefs,
   resolvers,
+  introspection: true,
   playground: {
     endpoint: '/graphql',
   },

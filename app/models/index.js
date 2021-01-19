@@ -1,17 +1,52 @@
 const Sequelize = require('sequelize');
 const connector = require('./connector');
 
-const AirReadings = connector.define('air_reading', {
-  id: {
-    type: Sequelize.BIGINT,
-    primaryKey: true,
-    autoIncrement: true,
-  },
+const id = {
+  type: Sequelize.BIGINT,
+  primaryKey: true,
+  autoIncrement: true,
+};
+
+const timestamps = {
+  createdAt: Sequelize.DATE,
+  updatedAt: Sequelize.DATE,
+};
+
+const particulateMeasurements = {
   pm10: Sequelize.INTEGER,
   pm25: Sequelize.INTEGER,
   pm100: Sequelize.INTEGER,
-  createdAt: Sequelize.DATE,
-  updatedAt: Sequelize.DATE,
+};
+
+const PurpleAirReading = connector.define('purpleAirReadings', {
+  id,
+  ...timestamps,
 });
 
-module.exports = { AirReadings };
+const LakemontPinesAirReading = connector.define('lakemontPinesAirReadings', {
+  id,
+  purpleAirReadingId: {
+    type: Sequelize.BIGINT,
+    references: {
+      model: 'purpleAirReading',
+      key: 'id',
+    },
+  },
+  ...timestamps,
+  ...particulateMeasurements,
+});
+
+const AirReading = connector.define('airReadings', {
+  id,
+  ...timestamps,
+  ...particulateMeasurements,
+});
+
+PurpleAirReading.LakemontPinesAirReading = PurpleAirReading.hasOne(LakemontPinesAirReading);
+LakemontPinesAirReading.PurpleAirReading = LakemontPinesAirReading.belongsTo(PurpleAirReading);
+
+module.exports = {
+  AirReading,
+  PurpleAirReading,
+  LakemontPinesAirReading,
+};

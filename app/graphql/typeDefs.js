@@ -32,6 +32,8 @@ const typeDefs = gql`
 
   type Query {
     tradfriDevices: TradfriDeviceResult
+    airReading(timeFrom: Date!, timeTo: Date!): [AirReading]
+    purpleAir(timeFrom: Date!, timeTo: Date!): [PurpleAir]
   }
 
   type Subscription {
