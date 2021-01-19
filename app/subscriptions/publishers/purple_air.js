@@ -22,6 +22,7 @@ const run = () => axios
           pm10,
           pm25,
           pm100,
+          createdAt: Date.now(),
         },
       },
     },

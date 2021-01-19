@@ -24,6 +24,7 @@ const typeDefs = gql`
     pm10: Int
     pm25: Int
     pm100: Int
+    createdAt: Date
   }
 
   type PurpleAir {

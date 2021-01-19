@@ -14,23 +14,44 @@ const outsidePm25Color = "rgb(0, 169, 71)";
 
 const valuesOf = (data) => data.map(({ value }) => value);
 
-export const GET_AIR_READING = gql`
+export const SUBSCRIBE_AIR_READING = gql`
   subscription AirReading {
     airReading {
       pm10
       pm25
       pm100
+      createdAt
     }
   }
 `;
 
-export const GET_PURPLE_AIR = gql`
+export const SUBSCRIBE_PURPLE_AIR = gql`
   subscription PurpleAir {
     purpleAir {
       lakemontPines {
         pm10
         pm25
         pm100
+        createdAt
+      }
+    }
+  }
+`;
+
+export const GET_AIR_READINGS = gql`
+  query AirReadings($timeFrom: Date!, $timeTo: Date!) {
+    airReading(timeFrom: $timeFrom, timeTo: $timeTo) {
+      pm10
+      pm25
+      pm100
+      createdAt
+    }
+    purpleAir(timeFrom: $timeFrom, timeTo: $timeTo) {
+      lakemontPines {
+        pm10
+        pm25
+        pm100
+        createdAt
       }
     }
   }
@@ -78,16 +99,20 @@ const App = () => {
     ...(new Array(9)).fill().map((_, x) => ({ x, y: 2, w: 1, h: 2 })),
   ].map((base, i) => ({ ...base, i: i.toString() })));
 
-  const { error: airSensorError, } = useSubscription(GET_AIR_READING, {
+  const { error: airSensorError, } = useSubscription(SUBSCRIBE_AIR_READING, {
     onSubscriptionData: ({ subscriptionData }) => {
       const {
         data: {
           airReading,
         },
       } = subscriptionData;
-      const { pm10, pm25, pm100 } = airReading;
 
-      const time = new Date().getTime();
+      const {
+        pm10,
+        pm25,
+        pm100,
+        createdAt: time,
+      } = airReading;
 
       setPm10History([...pm10History, { value: pm10, time }]);
       setPm25History([...pm25History, { value: pm25, time }]);
@@ -96,19 +121,18 @@ const App = () => {
     },
   });
 
-  const { error: purpleAirError, } = useSubscription(GET_PURPLE_AIR, {
+  const { error: purpleAirError, } = useSubscription(SUBSCRIBE_PURPLE_AIR, {
     onSubscriptionData: ({ subscriptionData }) => {
       const {
         data: {
           purpleAir: {
             lakemontPines: {
               pm25,
+              createdAt: time,
             },
           },
         },
       } = subscriptionData;
-
-      const time = new Date().getTime();
 
       setOutsidePm25History([...outsidePm25History, { value: pm25, time }]);
       setCurrentOutsidePm25(pm25);
@@ -121,7 +145,10 @@ const App = () => {
     data: tradfriData,
   } = useQuery(GET_TRADFRI_DEVICES);
 
-  if (tradfriLoading || current === null) return 'Loading...';
+  if (tradfriLoading || current === null) {
+    return 'Loading...';
+  }
+
   if (airSensorError) return JSON.stringify(airSensorError);
   if (purpleAirError) return JSON.stringify(purpleAirError);
   if (tradfriError) return JSON.stringify(tradfriError);

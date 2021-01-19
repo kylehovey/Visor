@@ -35,6 +35,7 @@ if (process.env.NODE_ENV === 'production') {
           pm10: Math.round(mockValue / 10),
           pm25: Math.round(mockValue / 2),
           pm100: mockValue,
+          createdAt: Date.now(),
         },
       },
     );
