@@ -77,6 +77,8 @@ export const GET_TRADFRI_DEVICES = gql`
 `;
 
 const App = () => {
+  const [ timeTo ] = useState(Date.now());
+  const [ timeFrom ] = useState(timeTo - 5 * 60e3);
   const [ current, setCurrent ] = useState(null);
   const [ currentOutsidePm25, setCurrentOutsidePm25 ] = useState(null);
   const [ pm10History, setPm10History ] = useState([]);
@@ -144,6 +146,34 @@ const App = () => {
     error: tradfriError,
     data: tradfriData,
   } = useQuery(GET_TRADFRI_DEVICES);
+
+  useQuery(GET_AIR_READINGS, {
+    variables: {
+      timeFrom,
+      timeTo,
+    },
+    onCompleted: ({ airReading, purpleAir }) => {
+      const [ current ] = airReading.slice(-1);
+      console.log(airReading);
+
+      setPm10History([
+        ...airReading.map(({ pm10: value, createdAt: time }) => ({ value, time })),
+        ...pm10History,
+      ]);
+      setPm25History([
+        ...airReading.map(({ pm25: value, createdAt: time }) => ({ value, time })),
+        ...pm25History,
+      ]);
+      setPm100History([
+        ...airReading.map(({ pm100: value, createdAt: time }) => ({ value, time })),
+        ...pm100History,
+      ]);
+
+      if (current === null) {
+        setCurrent(current);
+      }
+    },
+  });
 
   if (tradfriLoading || current === null) {
     return 'Loading...';

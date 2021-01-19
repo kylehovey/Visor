@@ -6,11 +6,11 @@ const Query = {
 
     return tradfriClient.getAllDevices();
   },
-  airReading(root, variables, context) {
+  async airReading(root, variables, context) {
     const { models } = context;
     const { timeFrom, timeTo } = variables;
 
-    return models.AirReading.findAll({
+    const readings = await models.AirReading.findAll({
       where: {
         createdAt: {
           [Op.between]: [
@@ -20,6 +20,13 @@ const Query = {
         },
       },
     });
+
+    return readings.map(({ createdAt, pm10, pm25, pm100 }) => ({
+      pm10,
+      pm25,
+      pm100,
+      createdAt: +(new Date(createdAt)),
+    }));
   },
   async purpleAir(root, variables, context) {
     const { models } = context;
@@ -37,9 +44,12 @@ const Query = {
       include: models.PurpleAirReading.LakemontPinesAirReading,
     });
 
-    return readings.map(({ lakemontPinesAirReading, ...rest }) => ({
-      ...rest,
+    return readings.map(({
+      lakemontPinesAirReading,
+      createdAt,
+    }) => ({
       lakemontPines: lakemontPinesAirReading,
+      createdAt: (+new Date(createdAt)),
     }));
   },
 };
