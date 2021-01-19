@@ -153,8 +153,8 @@ const App = () => {
       timeTo,
     },
     onCompleted: ({ airReading, purpleAir }) => {
-      const [ current ] = airReading.slice(-1);
-      console.log(airReading);
+      const [ latest ] = airReading.slice(-1);
+      const [ latestOutside ] = purpleAir.slice(-1);
 
       setPm10History([
         ...airReading.map(({ pm10: value, createdAt: time }) => ({ value, time })),
@@ -168,9 +168,28 @@ const App = () => {
         ...airReading.map(({ pm100: value, createdAt: time }) => ({ value, time })),
         ...pm100History,
       ]);
+      setOutsidePm25History([
+        ...purpleAir.map(({
+          lakemontPines: {
+            pm25: value,
+          },
+          createdAt: time,
+        }) => ({ value, time })),
+        ...outsidePm25History,
+      ]);
 
-      if (current === null) {
-        setCurrent(current);
+      if (current === null && latest !== undefined) {
+        setCurrent(latest);
+      }
+
+      if (currentOutsidePm25 === null && latestOutside !== undefined) {
+        const {
+          lakemontPines: {
+            pm25,
+          },
+        } = latestOutside;
+
+        setCurrentOutsidePm25(pm25);
       }
     },
   });
