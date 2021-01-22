@@ -19,6 +19,7 @@ const Query = {
           ],
         },
       },
+      order: [['createdAt', 'ASC']],
     });
 
     return readings.map(({ createdAt, pm10, pm25, pm100 }) => ({
@@ -41,6 +42,7 @@ const Query = {
           ],
         },
       },
+      order: [['createdAt', 'ASC']],
       include: models.PurpleAirReading.LakemontPinesAirReading,
     });
 
