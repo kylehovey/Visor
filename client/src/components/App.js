@@ -290,6 +290,7 @@ const App = () => {
           onLayoutChange={setLayout}
           className="layout"
           compactType={null}
+          isDraggable={false}
         >
           {modules.map(({ key, component }) => (
             <div
