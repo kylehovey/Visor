@@ -14,7 +14,12 @@ if (process.env.NODE_ENV === 'production') {
     parser.on('data', (data) => {
       pubsub.publish(
         topics.AIR_READING_TOPIC,
-        { airReading: JSON.parse(data) },
+        {
+          airReading: {
+            ...JSON.parse(data),
+            createdAt: Date.now(),
+          },
+        },
       );
     });
   } catch (err) {
@@ -32,10 +37,10 @@ if (process.env.NODE_ENV === 'production') {
       topics.AIR_READING_TOPIC,
       {
         airReading: {
+          createdAt: Date.now(),
           pm10: Math.round(mockValue / 10),
           pm25: Math.round(mockValue / 2),
           pm100: mockValue,
-          createdAt: Date.now(),
         },
       },
     );

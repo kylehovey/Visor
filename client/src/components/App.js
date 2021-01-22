@@ -17,10 +17,10 @@ const valuesOf = (data) => data.map(({ value }) => value);
 export const SUBSCRIBE_AIR_READING = gql`
   subscription AirReading {
     airReading {
+      createdAt
       pm10
       pm25
       pm100
-      createdAt
     }
   }
 `;
@@ -28,11 +28,11 @@ export const SUBSCRIBE_AIR_READING = gql`
 export const SUBSCRIBE_PURPLE_AIR = gql`
   subscription PurpleAir {
     purpleAir {
+      createdAt
       lakemontPines {
         pm10
         pm25
         pm100
-        createdAt
       }
     }
   }
@@ -41,17 +41,17 @@ export const SUBSCRIBE_PURPLE_AIR = gql`
 export const GET_AIR_READINGS = gql`
   query AirReadings($timeFrom: Date!, $timeTo: Date!) {
     airReading(timeFrom: $timeFrom, timeTo: $timeTo) {
+      createdAt
       pm10
       pm25
       pm100
-      createdAt
     }
     purpleAir(timeFrom: $timeFrom, timeTo: $timeTo) {
+      createdAt
       lakemontPines {
         pm10
         pm25
         pm100
-        createdAt
       }
     }
   }
@@ -78,7 +78,7 @@ export const GET_TRADFRI_DEVICES = gql`
 
 const App = () => {
   const [ timeTo ] = useState(Date.now());
-  const [ timeFrom ] = useState(timeTo - 5 * 60e3);
+  const [ timeFrom ] = useState(timeTo - 60 * 60e3);
   const [ current, setCurrent ] = useState(null);
   const [ currentOutsidePm25, setCurrentOutsidePm25 ] = useState(null);
   const [ pm10History, setPm10History ] = useState([]);
@@ -128,9 +128,9 @@ const App = () => {
       const {
         data: {
           purpleAir: {
+            createdAt: time,
             lakemontPines: {
               pm25,
-              createdAt: time,
             },
           },
         },

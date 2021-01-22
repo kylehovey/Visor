@@ -28,6 +28,7 @@ const typeDefs = gql`
   }
 
   type PurpleAir {
+    createdAt: Date
     lakemontPines: AirReading
   }
 

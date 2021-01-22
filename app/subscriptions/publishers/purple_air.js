@@ -18,6 +18,7 @@ const run = () => axios
     topics.PURPLE_AIR_TOPIC,
     {
       purpleAir: {
+        createdAt: Date.now(),
         lakemontPines: {
           pm10,
           pm25,
