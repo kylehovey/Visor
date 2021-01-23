@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useSubscription, gql } from '@apollo/client';
 
 import GridLayout from "react-grid-layout";
@@ -77,8 +77,9 @@ export const GET_TRADFRI_DEVICES = gql`
 `;
 
 const App = () => {
-  const [ timeTo ] = useState(Date.now());
-  const [ timeFrom ] = useState(timeTo - 60 * 60e3);
+  const [ hoursBack, setHoursBack ] = useState(1);
+  const [ timeTo, setTimeTo ] = useState(Date.now());
+  const [ timeFrom, setTimeFrom ] = useState(timeTo - hoursBack * 60 * 60e3);
   const [ current, setCurrent ] = useState(null);
   const [ currentOutsidePm25, setCurrentOutsidePm25 ] = useState(null);
   const [ pm10History, setPm10History ] = useState([]);
@@ -92,6 +93,7 @@ const App = () => {
     { x: 3, y: 0, w: 2, h: 2 },
     { x: 5, y: 0, w: 2, h: 2 },
     { x: 7, y: 0, w: 2, h: 2 },
+    { x: 9, y: 0, w: 2, h: 2 },
 
     { x: 0, y: 4, w: 8, h: 9 },
     { x: 8, y: 4, w: 8, h: 9 },
@@ -100,6 +102,11 @@ const App = () => {
 
     ...(new Array(9)).fill().map((_, x) => ({ x, y: 2, w: 1, h: 2 })),
   ].map((base, i) => ({ ...base, i: i.toString() })));
+
+  useEffect(() => {
+    setTimeFrom(timeTo - hoursBack * 60 * 60e3);
+    setTimeTo(Date.now());
+  }, [hoursBack]);
 
   const { error: airSensorError, } = useSubscription(SUBSCRIBE_AIR_READING, {
     onSubscriptionData: ({ subscriptionData }) => {
@@ -156,18 +163,9 @@ const App = () => {
       const [ latest ] = airReading.slice(-1);
       const [ latestOutside ] = purpleAir.slice(-1);
 
-      setPm10History([
-        ...airReading.map(({ pm10: value, createdAt: time }) => ({ value, time })),
-        ...pm10History,
-      ]);
-      setPm25History([
-        ...airReading.map(({ pm25: value, createdAt: time }) => ({ value, time })),
-        ...pm25History,
-      ]);
-      setPm100History([
-        ...airReading.map(({ pm100: value, createdAt: time }) => ({ value, time })),
-        ...pm100History,
-      ]);
+      setPm10History(airReading.map(({ pm10: value, createdAt: time }) => ({ value, time })));
+      setPm25History(airReading.map(({ pm25: value, createdAt: time }) => ({ value, time })));
+      setPm100History(airReading.map(({ pm100: value, createdAt: time }) => ({ value, time })));
       setOutsidePm25History([
         ...purpleAir.map(({
           lakemontPines: {
@@ -175,7 +173,6 @@ const App = () => {
           },
           createdAt: time,
         }) => ({ value, time })),
-        ...outsidePm25History,
       ]);
 
       if (current === null && latest !== undefined) {
@@ -241,6 +238,18 @@ const App = () => {
       units="µg/m³"
       color={outsidePm25Color}
     />,
+
+    () => (
+      <div>
+        <label for="hoursBack">Hours of History</label>
+        <input
+          id="hoursBack"
+          type="number"
+          value={hoursBack}
+          onChange={({ target }) => setHoursBack(target.value)}
+        />
+      </div>
+    ),
 
     () => <AirChart
       title={`PM1.0: ${pm10}µg/m³`}
