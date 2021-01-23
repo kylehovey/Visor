@@ -33,7 +33,12 @@ const stow = () => {
 (async (stream) => {
   /* eslint-disable-next-line no-restricted-syntax */
   for await (const { airReading } of stream) {
-    const { pm10, pm25, pm100, createdAt } = airReading;
+    const {
+      pm10,
+      pm25,
+      pm100,
+      createdAt,
+    } = airReading;
     const { pm10: a10, pm25: a25, pm100: a100 } = average;
 
     lastTime = createdAt;

@@ -20,7 +20,7 @@ const { pubsub, topics } = require('..');
         pm25: Math.round(pm25),
         pm100: Math.round(pm100),
       },
-    },{
+    }, {
       include: [{
         association: models.PurpleAirReading.LakemontPinesAirReading,
       }],

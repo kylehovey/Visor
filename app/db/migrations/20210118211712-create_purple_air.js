@@ -30,7 +30,7 @@ module.exports = {
       pm10: Sequelize.INTEGER,
       pm25: Sequelize.INTEGER,
       pm100: Sequelize.INTEGER,
-    }
+    },
   )),
 
   down: async (queryInterface) => queryInterface
