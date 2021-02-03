@@ -1,5 +1,7 @@
 # Visor - Personal Home Dashboard
 
+![Visor Screenshot](visor.png)
+
 ## Features
 
 * Live indoor/outdoor particulate matter monitoring (PM1.0, PM2.5, PM100)
