@@ -1,28 +1,21 @@
-# React App Boilerplate
-
-![Node.js CI](https://github.com/kylehovey/Visor/workflows/Node.js%20CI/badge.svg)
-
-This is a boilerplate setup for a React app with a Node.js back-end with a pre-configured GraphQL API with Websocket subscriptions set up. I am following this mantra:
-
-* Make the setup as simple as possible
-* Make the setup maintainable and flexible for future modifications
-* Choose ones with active maintenance
-* Choose ones with comprehensive documentation
-* Whenever possible, use libraries, not custom toolings
-
-So far, this project is more-or-less 100% standard, with only the directory structure being unique to this project. This repo serves mainly as a starting point so that you don't have to spend hours setting up your React/Express/ORM/API/Websocket stack. This boilerplate is also production-ready.
+# Visor - Personal Home Dashboard
 
 ## Features
 
-* React development server
-* Express back-end
-* Apollo GraphQL server with an example schema set up
-* Sequelize ORM as a PostgreSQL connector supplied as context to Apollo GraphQL
-* GraphQL subscriptions set up and working out-of-the-box
-* A publisher model for broadcasting arbitrary events over GraphQL subscriptions
-* [dotenv-flow](https://www.npmjs.com/package/dotenv-flow) for both server and client
-* Script to run back-end with `nodemon` and front-end with `react-scripts` for hot-reloading on both sides
-* One simple script to compile a production client build and serve it from express
+* Live indoor/outdoor particulate matter monitoring (PM1.0, PM2.5, PM100)
+* [CoAP](https://github.com/glenndehaan/ikea-tradfri-coap-docs) control for smart plugs and lights
+* Persistent history of sensor data with adjustable timescales
+* GraphQL server (with [playground](https://github.com/graphql/graphql-playground))
+
+## Hardware Requirements
+
+* This app relies on a sensor connected over serial (which means that running the server needs to have privileged access for reading the serial port file). It doesn't exactly matter what sensor you use, only that the hardware spits out newline-separated strings like:
+
+```
+{"pm10":5,"pm25":3,"pm100":8}
+{"pm10":6,"pm25":4,"pm100":7}
+{"pm10":5,"pm25":3,"pm100":9}
+```
 
 ## Development
 
@@ -51,6 +44,8 @@ asdf install
 npm i -g sequelize-cli nodemon
 npm run setup
 npm run dbsetup
+npm run migrate-dev
+npm run migrate-prod
 
 # One tab
 npm run server
