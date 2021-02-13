@@ -4,7 +4,7 @@ const Readline = require('@serialport/parser-readline');
 const { pubsub, topics } = require('..');
 
 if (process.env.NODE_ENV === 'production') {
-  const serialPath = '/dev/serial/by-id/usb-Arduino_LLC_Arduino_Micro-if00';
+  const serialPath = process.env.AIR_READING_SERIAL_PATH;
   const serialPort = new SerialPort(serialPath, { baudRate: 9600 });
 
   const parser = new Readline();
