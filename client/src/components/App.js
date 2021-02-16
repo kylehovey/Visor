@@ -7,10 +7,10 @@ import AirChart from './modules/air_quality';
 import Average from './modules/average';
 import TradfriToggle from './modules/tradfri_toggle';
 
-const pm10Color = "rgb(245, 126, 127)";
-const pm25Color = "rgb(239, 129, 255)";
-const pm100Color = "rgb(255, 169, 71)";
-const outsidePm25Color = "rgb(0, 169, 71)";
+const pm10Color = "#fb4934";
+const pm25Color = "#d3869b";
+const pm100Color = "#f38019";
+const outsidePm25Color = "#458588";
 
 const valuesOf = (data) => data.map(({ value }) => value);
 
@@ -218,13 +218,13 @@ const App = () => {
       values={valuesOf(pm10History)}
       title="PM1.0"
       units="µg/m³"
-      color={pm25Color}
+      color={pm10Color}
     />,
     () => <Average
       values={valuesOf(pm25History)}
       title="PM2.5"
       units="µg/m³"
-      color={pm10Color}
+      color={pm25Color}
     />,
     () => <Average
       values={valuesOf(pm100History)}

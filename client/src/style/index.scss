@@ -1,9 +1,11 @@
-$bg: #3b3b3b;
-$bg-l: #4b4b4b;
-$bg-ld: #404040;
-$fg: #f3f3f3;
-$active: #579275;
-$inactive: #943f3f;
+@import "colors.scss";
+
+$bg: $gb-dm-bg0;
+$bg-l: $gb-dm-bg0-soft;
+$bg-ld: $gb-dm-bg1;
+$fg: $gb-dm-fg0;
+$active: $gb-dm-dark-aqua;
+$inactive: $gb-dm-light-blue;
 
 body {
   background-color: $bg;
@@ -16,7 +18,19 @@ div.container {
   div.content {
 
     div.grid-module-content {
+      text-align: center;
       margin: 10px;
+
+      label {
+        font-weight: bold;
+      }
+
+      input {
+        background-color: $fg;
+        padding: 5px;
+        font-weight: bold;
+        width: 100px;
+      }
     }
 
     div.tradfri-toggle-container {
