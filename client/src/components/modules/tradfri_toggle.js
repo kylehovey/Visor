@@ -1,4 +1,8 @@
+import "react-toggle/style.css";
+
 import { useMutation, gql } from '@apollo/client';
+import Toggle from 'react-toggle';
+import { useState } from 'react';
 
 import { GET_TRADFRI_DEVICES } from '../App';
 
@@ -10,6 +14,7 @@ mutation Tradfri($id: String!, $type: TradfriDeviceType!, $status: Int!) {
 
 const TradfriToggle = ({ id, name, type, status }) => {
   const active = status > 0;
+  const [waiting, setWaiting] = useState(false);
   const [setStatus] = useMutation(SET_TRADFRI_STATUS);
   const toggleStatus = () => setStatus({
     variables: {
@@ -22,17 +27,20 @@ const TradfriToggle = ({ id, name, type, status }) => {
     refetchQueries: [
       { query: GET_TRADFRI_DEVICES },
     ],
-  });
+  }).finally(() => setWaiting(false));
 
   return (
-    <div className="tradfri-toggle-container">
-      <button
-        className={active ? 'on' : 'off'}
-        onClick={toggleStatus}
-      >
-        {name}
-      </button>
-    </div>
+    <label>
+      <span className="toggle-title">{name}</span>
+      <br />
+      <Toggle
+        className={waiting ? "waiting" : ""}
+        onChange={toggleStatus}
+        onClick={() => setWaiting(true)}
+        checked={active}
+        icons={false}
+      />
+    </label>
   );
 };
 

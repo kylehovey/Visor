@@ -30,6 +30,7 @@
     "node-tradfri-client": "^2.1.8",
     "pg": "^8.5.1",
     "pg-hstore": "^2.3.3",
+    "react-toggle": "^4.1.1",
     "sequelize": "^6.3.5",
     "serialport": "^9.0.4"
   },

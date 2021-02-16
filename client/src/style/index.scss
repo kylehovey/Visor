@@ -6,6 +6,8 @@ $bg-ld: $gb-dm-bg1;
 $fg: $gb-dm-fg0;
 $active: $gb-dm-dark-aqua;
 $inactive: $gb-dm-light-blue;
+$unsure: $gb-dm-dark-orange;
+$unsure-l: $gb-dm-light-yellow;
 
 body {
   background-color: $bg;
@@ -14,15 +16,42 @@ body {
   line-height: 150%;
 }
 
+@keyframes waiting {
+  0% {
+    background-color: $unsure;
+  }
+  50% {
+    background-color: $unsure-l;
+  }
+  100% {
+    background-color: $unsure;
+  }
+}
+
 div.container {
   div.content {
 
     div.grid-module-content {
       text-align: center;
-      margin: 10px;
+      margin: 4px;
 
       label {
         font-weight: bold;
+
+        .toggle-title {
+          text-transform: capitalize;
+        }
+
+        .react-toggle {
+          margin-top: 8px;
+
+          &.waiting .react-toggle-track {
+            animation-name: waiting;
+            animation-duration: 1.5s;
+            animation-timing-function: ease-in-out;
+            animation-iteration-count: infinite;
+          }
+        }
       }
 
       input {
