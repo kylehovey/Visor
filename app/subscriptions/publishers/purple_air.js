@@ -33,4 +33,34 @@ const run = () => axios
   .then(() => new Promise((r) => setTimeout(r, 5000)))
   .then(run);
 
-run();
+const mock = async () => {
+  const mockValue = Number.parseInt(
+    Math.sin(+(new Date()) / 5000) * 50 + 50,
+    10,
+  );
+
+  pubsub.publish(
+    topics.PURPLE_AIR_TOPIC,
+    {
+      purpleAir: {
+        createdAt: Date.now(),
+        lakemontPines: {
+          createdAt: Date.now(),
+          pm10: Math.round(mockValue / 10),
+          pm25: Math.round(mockValue / 2),
+          pm100: mockValue,
+        },
+      },
+    },
+  );
+
+  await new Promise((r) => setTimeout(r, 5000));
+
+  mock();
+};
+
+if (process.env.NODE_ENV === 'production') {
+  run();
+} else {
+  mock();
+}
