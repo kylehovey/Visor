@@ -5,6 +5,7 @@
 ## Features
 
 * Live indoor/outdoor particulate matter monitoring (PM1.0, PM2.5, PM100)
+* Live updates for CO2, Temperature, and Relative Humidity
 * [CoAP](https://github.com/glenndehaan/ikea-tradfri-coap-docs) control for smart plugs and lights
 * Persistent history of sensor data with adjustable timescales
 * GraphQL server (with [playground](https://github.com/graphql/graphql-playground))
