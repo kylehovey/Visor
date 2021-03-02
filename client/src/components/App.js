@@ -7,6 +7,8 @@ import AirChart from './modules/air_quality';
 import Average from './modules/average';
 import TradfriToggle from './modules/tradfri_toggle';
 
+const asFreedom = c => (c * 9/5) + 32;
+
 const carbonDioxideColor = "#689d6a";
 const temperatureColor = "#b16286";
 const relativeHumidityColor = "#458588";
@@ -149,7 +151,7 @@ const App = () => {
       } = gasReading;
 
       setCarbonDioxideHistory([...carbonDioxideHistory, { value: carbonDioxide, time }]);
-      setTemperatureHistory([...temperatureHistory, { value: temperature, time }]);
+      setTemperatureHistory([...temperatureHistory, { value: asFreedom(temperature), time }]);
       setRelativeHumidityHistory([...relativeHumidityHistory, { value: relativeHumidity, time }]);
       setCurrentGasReading(gasReading);
     },
@@ -219,7 +221,7 @@ const App = () => {
       setTemperatureHistory(gasReading.map(({
         temperature: value,
         createdAt: time,
-      }) => ({ value, time })));
+      }) => ({ value: asFreedom(value), time })));
 
       setRelativeHumidityHistory(gasReading.map(({
         relativeHumidity: value,
@@ -350,7 +352,7 @@ const App = () => {
       color={carbonDioxideColor}
     />,
     () => <AirChart
-      title={`Temperature: ${temperature.toFixed(2)}˚C`}
+      title={`Temperature: ${asFreedom(temperature).toFixed(2)}˚F`}
       values={temperatureHistory}
       color={temperatureColor}
     />,
