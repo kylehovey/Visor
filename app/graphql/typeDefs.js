@@ -27,6 +27,13 @@ const typeDefs = gql`
     createdAt: Date
   }
 
+  type GasReading {
+    temperature: Float
+    relativeHumidity: Float
+    carbonDioxide: Float
+    createdAt: Date
+  }
+
   type PurpleAir {
     createdAt: Date
     lakemontPines: AirReading
@@ -35,11 +42,13 @@ const typeDefs = gql`
   type Query {
     tradfriDevices: TradfriDeviceResult
     airReading(timeFrom: Date!, timeTo: Date!): [AirReading]
+    gasReading(timeFrom: Date!, timeTo: Date!): [GasReading]
     purpleAir(timeFrom: Date!, timeTo: Date!): [PurpleAir]
   }
 
   type Subscription {
     airReading: AirReading
+    gasReading: GasReading
     purpleAir: PurpleAir
   }
 

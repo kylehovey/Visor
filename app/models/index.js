@@ -42,6 +42,14 @@ const AirReading = connector.define('airReadings', {
   ...particulateMeasurements,
 });
 
+const GasReading = connector.define('gasReadings', {
+  id,
+  ...timestamps,
+  carbonDioxide: Sequelize.FLOAT,
+  temperature: Sequelize.FLOAT,
+  relativeHumidity: Sequelize.FLOAT,
+});
+
 PurpleAirReading.LakemontPinesAirReading = PurpleAirReading.hasOne(LakemontPinesAirReading);
 LakemontPinesAirReading.PurpleAirReading = LakemontPinesAirReading.belongsTo(PurpleAirReading);
 
@@ -49,4 +57,5 @@ module.exports = {
   AirReading,
   PurpleAirReading,
   LakemontPinesAirReading,
+  GasReading,
 };

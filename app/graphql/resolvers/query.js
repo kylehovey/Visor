@@ -36,6 +36,36 @@ const Query = {
       }),
     );
   },
+  async gasReading(root, variables, context) {
+    const { models } = context;
+    const { timeFrom, timeTo } = variables;
+
+    const readings = await models.GasReading.findAll({
+      where: {
+        createdAt: {
+          [Op.between]: [
+            timeFrom,
+            timeTo,
+          ],
+        },
+      },
+      order: [['createdAt', 'ASC']],
+    });
+
+    return readings.map(
+      ({
+        createdAt,
+        carbonDioxide,
+        temperature,
+        relativeHumidity,
+      }) => ({
+        carbonDioxide,
+        temperature,
+        relativeHumidity,
+        createdAt: +(new Date(createdAt)),
+      }),
+    );
+  },
   async purpleAir(root, variables, context) {
     const { models } = context;
     const { timeFrom, timeTo } = variables;
