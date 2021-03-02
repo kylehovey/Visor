@@ -1,6 +1,6 @@
 # Visor - Personal Home Dashboard
 
-![Visor Screenshot](visor.png)
+![Visor Screenshot](https://user-images.githubusercontent.com/7339800/109727182-ba755900-7b68-11eb-8a54-24a2710eec46.png)
 
 ## Features
 
