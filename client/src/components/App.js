@@ -10,9 +10,9 @@ import TradfriToggle from './modules/tradfri_toggle';
 const asFreedom = c => (c * 9/5) + 32;
 
 const carbonDioxideColor = "#689d6a";
-const temperatureColor = "#b16286";
+const temperatureColor = "#fb4934";
 const relativeHumidityColor = "#458588";
-const pm10Color = "#fb4934";
+const pm10Color = "#b16286";
 const pm25Color = "#d3869b";
 const pm100Color = "#f38019";
 const outsidePm25Color = "#fabd2f";
@@ -120,6 +120,7 @@ const App = () => {
     { x: 5, y: 0, w: 2, h: 2 },
     { x: 7, y: 0, w: 2, h: 2 },
     { x: 9, y: 0, w: 2, h: 2 },
+    { x: 11, y: 0, w: 2, h: 2 },
 
     { x: 0, y: 4, w: 8, h: 9 },
     { x: 8, y: 4, w: 8, h: 9 },
@@ -290,28 +291,34 @@ const App = () => {
     ),
 
     () => <Average
-      values={valuesOf(pm10History)}
-      title="PM1.0"
-      units="µg/m³"
-      color={pm10Color}
-    />,
-    () => <Average
       values={valuesOf(pm25History)}
       title="PM2.5"
       units="µg/m³"
       color={pm25Color}
     />,
     () => <Average
-      values={valuesOf(pm100History)}
-      title="PM10.0"
-      units="µg/m³"
-      color={pm100Color}
-    />,
-    () => <Average
       values={valuesOf(outsidePm25History)}
       title="Outdoor PM2.5"
       units="µg/m³"
       color={outsidePm25Color}
+    />,
+    () => <Average
+      values={valuesOf(carbonDioxideHistory)}
+      title="CO2"
+      units="ppm"
+      color={carbonDioxideColor}
+    />,
+    () => <Average
+      values={valuesOf(temperatureHistory)}
+      title="Temperature"
+      units="˚F"
+      color={temperatureColor}
+    />,
+    () => <Average
+      values={valuesOf(relativeHumidityHistory)}
+      title="Humidity"
+      units="%"
+      color={relativeHumidityColor}
     />,
 
     () => (
