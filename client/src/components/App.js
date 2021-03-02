@@ -7,10 +7,13 @@ import AirChart from './modules/air_quality';
 import Average from './modules/average';
 import TradfriToggle from './modules/tradfri_toggle';
 
+const carbonDioxideColor = "#689d6a";
+const temperatureColor = "#b16286";
+const relativeHumidityColor = "#458588";
 const pm10Color = "#fb4934";
 const pm25Color = "#d3869b";
 const pm100Color = "#f38019";
-const outsidePm25Color = "#458588";
+const outsidePm25Color = "#fabd2f";
 
 const valuesOf = (data) => data.map(({ value }) => value);
 
@@ -21,6 +24,17 @@ export const SUBSCRIBE_AIR_READING = gql`
       pm10
       pm25
       pm100
+    }
+  }
+`;
+
+export const SUBSCRIBE_GAS_READING = gql`
+  subscription GasReading {
+    gasReading {
+      createdAt
+      carbonDioxide
+      temperature
+      relativeHumidity
     }
   }
 `;
@@ -40,6 +54,12 @@ export const SUBSCRIBE_PURPLE_AIR = gql`
 
 export const GET_AIR_READINGS = gql`
   query AirReadings($timeFrom: Date!, $timeTo: Date!) {
+    gasReading(timeFrom: $timeFrom, timeTo: $timeTo) {
+      createdAt
+      carbonDioxide
+      temperature
+      relativeHumidity
+    }
     airReading(timeFrom: $timeFrom, timeTo: $timeTo) {
       createdAt
       pm10
@@ -81,7 +101,11 @@ const App = () => {
   const [ timeTo, setTimeTo ] = useState(Date.now());
   const [ timeFrom, setTimeFrom ] = useState(timeTo - hoursBack * 60 * 60e3);
   const [ current, setCurrent ] = useState(null);
+  const [ currentGasReading, setCurrentGasReading] = useState(null);
   const [ currentOutsidePm25, setCurrentOutsidePm25 ] = useState(null);
+  const [ carbonDioxideHistory, setCarbonDioxideHistory ] = useState([]);
+  const [ temperatureHistory, setTemperatureHistory ] = useState([]);
+  const [ relativeHumidityHistory, setRelativeHumidityHistory ] = useState([]);
   const [ pm10History, setPm10History ] = useState([]);
   const [ pm25History, setPm25History ] = useState([]);
   const [ pm100History, setPm100History ] = useState([]);
@@ -99,6 +123,7 @@ const App = () => {
     { x: 8, y: 4, w: 8, h: 9 },
     { x: 0, y: 13, w: 8, h: 9 },
     { x: 8, y: 13, w: 8, h: 9 },
+    { x: 0, y: 21, w: 8, h: 9 },
 
     ...(new Array(9)).fill().map((_, x) => ({ x, y: 2, w: 1, h: 2 })),
   ].map((base, i) => ({ ...base, i: i.toString() })));
@@ -107,6 +132,28 @@ const App = () => {
     setTimeFrom(timeTo - hoursBack * 60 * 60e3);
     setTimeTo(Date.now());
   }, [hoursBack]);
+
+  const { error: gasSensorError, } = useSubscription(SUBSCRIBE_GAS_READING, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      const {
+        data: {
+          gasReading,
+        },
+      } = subscriptionData;
+
+      const {
+        carbonDioxide,
+        temperature,
+        relativeHumidity,
+        createdAt: time,
+      } = gasReading;
+
+      setCarbonDioxideHistory([...carbonDioxideHistory, { value: carbonDioxide, time }]);
+      setTemperatureHistory([...temperatureHistory, { value: temperature, time }]);
+      setRelativeHumidityHistory([...relativeHumidityHistory, { value: relativeHumidity, time }]);
+      setCurrentGasReading(gasReading);
+    },
+  });
 
   const { error: airSensorError, } = useSubscription(SUBSCRIBE_AIR_READING, {
     onSubscriptionData: ({ subscriptionData }) => {
@@ -159,9 +206,25 @@ const App = () => {
       timeFrom,
       timeTo,
     },
-    onCompleted: ({ airReading, purpleAir }) => {
+    onCompleted: ({ airReading, gasReading, purpleAir }) => {
       const [ latest ] = airReading.slice(-1);
+      const [ latestGas ] = gasReading.slice(-1);
       const [ latestOutside ] = purpleAir.slice(-1);
+
+      setCarbonDioxideHistory(gasReading.map(({
+        carbonDioxide: value,
+        createdAt: time,
+      }) => ({ value, time })));
+
+      setTemperatureHistory(gasReading.map(({
+        temperature: value,
+        createdAt: time,
+      }) => ({ value, time })));
+
+      setRelativeHumidityHistory(gasReading.map(({
+        relativeHumidity: value,
+        createdAt: time,
+      }) => ({ value, time })));
 
       setPm10History(airReading.map(({ pm10: value, createdAt: time }) => ({ value, time })));
       setPm25History(airReading.map(({ pm25: value, createdAt: time }) => ({ value, time })));
@@ -174,6 +237,10 @@ const App = () => {
           createdAt: time,
         }) => ({ value, time })),
       ]);
+
+      if (currentGasReading === null && latestGas !== undefined) {
+        setCurrentGasReading(latestGas);
+      }
 
       if (current === null && latest !== undefined) {
         setCurrent(latest);
@@ -191,15 +258,21 @@ const App = () => {
     },
   });
 
-  if (tradfriLoading || current === null) {
+  if (tradfriLoading || current === null || currentGasReading === null) {
     return 'Loading...';
   }
 
+  if (gasSensorError) return JSON.stringify(gasSensorError);
   if (airSensorError) return JSON.stringify(airSensorError);
   if (purpleAirError) return JSON.stringify(purpleAirError);
   if (tradfriError) return JSON.stringify(tradfriError);
 
   const { pm10, pm25, pm100 } = current;
+  const {
+    carbonDioxide,
+    temperature,
+    relativeHumidity,
+  } = currentGasReading;
   const {
     tradfriDevices: {
       bulbs,
@@ -251,25 +324,40 @@ const App = () => {
       </div>
     ),
 
-    () => <AirChart
-      title={`PM1.0: ${pm10}µg/m³`}
-      values={pm10History}
-      color={pm10Color}
-    />,
+    //() => <AirChart
+    //  title={`PM1.0: ${pm10}µg/m³`}
+    //  values={pm10History}
+    //  color={pm10Color}
+    ///>,
     () => <AirChart
       title={`PM2.5: ${pm25}µg/m³`}
       values={pm25History}
       color={pm25Color}
     />,
-    () => <AirChart
-      title={`PM10.0: ${pm100}µg/m³`}
-      values={pm100History}
-      color={pm100Color}
-    />,
+    //() => <AirChart
+    //  title={`PM10.0: ${pm100}µg/m³`}
+    //  values={pm100History}
+    //  color={pm100Color}
+    ///>,
     () => <AirChart
       title={`Outside PM2.5: ${currentOutsidePm25}µg/m³`}
       values={outsidePm25History}
       color={outsidePm25Color}
+    />,
+    () => <AirChart
+      title={`CO2: ${carbonDioxide.toFixed(2)}ppm`}
+      values={carbonDioxideHistory}
+      color={carbonDioxideColor}
+    />,
+    () => <AirChart
+      title={`Temperature: ${temperature.toFixed(2)}˚C`}
+      values={temperatureHistory}
+      color={temperatureColor}
+    />,
+    () => <AirChart
+      title={`Relative Humidity: ${relativeHumidity.toFixed(2)}%`}
+      values={relativeHumidityHistory}
+      color={relativeHumidityColor}
     />,
 
     ...bulbs.map((bulb) => () => (
