@@ -11,6 +11,7 @@ const asFreedom = c => (c * 9/5) + 32;
 
 const carbonDioxideColor = "#689d6a";
 const temperatureColor = "#fb4934";
+const outsideTemperatureColor = "#b16286";
 const relativeHumidityColor = "#458588";
 const pm10Color = "#b16286";
 const pm25Color = "#d3869b";
@@ -49,6 +50,7 @@ export const SUBSCRIBE_PURPLE_AIR = gql`
         pm10
         pm25
         pm100
+        temperature
       }
     }
   }
@@ -74,6 +76,7 @@ export const GET_AIR_READINGS = gql`
         pm10
         pm25
         pm100
+        temperature
       }
     }
   }
@@ -105,6 +108,7 @@ const App = () => {
   const [ current, setCurrent ] = useState(null);
   const [ currentGasReading, setCurrentGasReading] = useState(null);
   const [ currentOutsidePm25, setCurrentOutsidePm25 ] = useState(null);
+  const [ currentOutsideTemperature, setCurrentOutsideTemperature ] = useState(null);
   const [ carbonDioxideHistory, setCarbonDioxideHistory ] = useState([]);
   const [ temperatureHistory, setTemperatureHistory ] = useState([]);
   const [ relativeHumidityHistory, setRelativeHumidityHistory ] = useState([]);
@@ -112,6 +116,7 @@ const App = () => {
   const [ pm25History, setPm25History ] = useState([]);
   const [ pm100History, setPm100History ] = useState([]);
   const [ outsidePm25History, setOutsidePm25History ] = useState([]);
+  const [ outsideTemperatureHistory, setOutsideTemperatureHistory ] = useState([]);
   const [ layout, setLayout ] = useState([
     { x: 0, y: 0, w: 1, h: 2 },
 
@@ -127,6 +132,7 @@ const App = () => {
     { x: 0, y: 13, w: 8, h: 9 },
     { x: 8, y: 13, w: 8, h: 9 },
     { x: 0, y: 21, w: 8, h: 9 },
+    { x: 8, y: 21, w: 8, h: 9 },
 
     ...(new Array(9)).fill().map((_, x) => ({ x, y: 2, w: 1, h: 2 })),
   ].map((base, i) => ({ ...base, i: i.toString() })));
@@ -188,13 +194,19 @@ const App = () => {
             createdAt: time,
             lakemontPines: {
               pm25,
+              temperature,
             },
           },
         },
       } = subscriptionData;
 
       setOutsidePm25History([...outsidePm25History, { value: pm25, time }]);
+      setOutsideTemperatureHistory([
+        ...outsideTemperatureHistory,
+        { value: asFreedom(temperature), time },
+      ]);
       setCurrentOutsidePm25(pm25);
+      setCurrentOutsideTemperature(asFreedom(temperature));
     },
   });
 
@@ -232,6 +244,14 @@ const App = () => {
       setPm10History(airReading.map(({ pm10: value, createdAt: time }) => ({ value, time })));
       setPm25History(airReading.map(({ pm25: value, createdAt: time }) => ({ value, time })));
       setPm100History(airReading.map(({ pm100: value, createdAt: time }) => ({ value, time })));
+      setOutsideTemperatureHistory([
+        ...purpleAir.map(({
+          lakemontPines: {
+            temperature: value,
+          },
+          createdAt: time,
+        }) => ({ value: asFreedom(value), time })),
+      ]);
       setOutsidePm25History([
         ...purpleAir.map(({
           lakemontPines: {
@@ -250,18 +270,21 @@ const App = () => {
       }
 
       if (currentOutsidePm25 === null && latestOutside !== undefined) {
-        const {
-          lakemontPines: {
-            pm25,
-          },
-        } = latestOutside;
+        setCurrentOutsidePm25(latestOutside.lakemontPines.pm25);
+      }
 
-        setCurrentOutsidePm25(pm25);
+      if (currentOutsideTemperature === null && latestOutside !== undefined) {
+        setCurrentOutsideTemperature(asFreedom(latestOutside.lakemontPines.temperature));
       }
     },
   });
 
-  if (tradfriLoading || current === null || currentGasReading === null) {
+  if (
+    tradfriLoading ||
+    current === null ||
+    currentGasReading === null ||
+    currentOutsideTemperature === null
+  ) {
     return 'Loading...';
   }
 
@@ -270,7 +293,7 @@ const App = () => {
   if (purpleAirError) return JSON.stringify(purpleAirError);
   if (tradfriError) return JSON.stringify(tradfriError);
 
-  const { pm10, pm25, pm100 } = current;
+  const { pm25 } = current;
   const {
     carbonDioxide,
     temperature,
@@ -323,7 +346,7 @@ const App = () => {
 
     () => (
       <div>
-        <label for="hoursBack">Hours of History</label>
+        <label htmlFor="hoursBack">Hours of History</label>
         <input
           id="hoursBack"
           type="number"
@@ -367,6 +390,11 @@ const App = () => {
       title={`Relative Humidity: ${relativeHumidity.toFixed(2)}%`}
       values={relativeHumidityHistory}
       color={relativeHumidityColor}
+    />,
+    () => <AirChart
+      title={`Outside Temperature: ${currentOutsideTemperature.toFixed(2)}˚F`}
+      values={(console.log(outsideTemperatureHistory), outsideTemperatureHistory)}
+      color={outsideTemperatureColor}
     />,
 
     ...bulbs.map((bulb) => () => (
