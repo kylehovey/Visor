@@ -42,7 +42,7 @@ if (process.env.NODE_ENV === 'production') {
     pubsub.publish(
       topics.GAS_READING_TOPIC,
       {
-        gasData: {
+        gasReading: {
           temperature: mockValue / 4,
           relativeHumidity: mockValue,
           carbonDioxide: 550 + mockValue,
