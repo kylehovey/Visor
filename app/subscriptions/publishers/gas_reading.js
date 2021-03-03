@@ -13,9 +13,9 @@ if (process.env.NODE_ENV === 'production') {
   parser.on('data', (data) => {
     try {
       const packet = JSON.parse(data);
-      
+
       if (packet.carbonDioxide === 0) {
-        throw "Initial reading, discarding.";
+        throw new Error('Initial reading, discarding.');
       }
 
       pubsub.publish(
