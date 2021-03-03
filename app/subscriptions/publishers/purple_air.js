@@ -26,7 +26,7 @@ const run = () => axios
           pm10,
           pm25,
           pm100,
-          temperature: (temperatureFarenheit - 32) * (5 / 9),
+          temperature: Math.round((temperatureFarenheit - 32) * (5 / 9)),
           createdAt: Date.now(),
         },
       },
