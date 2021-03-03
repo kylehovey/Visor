@@ -10,15 +10,17 @@ const { pubsub, topics } = require('..');
           pm10,
           pm25,
           pm100,
+          temperature,
         },
       },
     } = data;
 
     models.PurpleAirReading.create({
       lakemontPinesAirReading: {
-        pm10: Math.round(pm10),
-        pm25: Math.round(pm25),
-        pm100: Math.round(pm100),
+        pm10,
+        pm25,
+        pm100,
+        temperature,
       },
     }, {
       include: [{

@@ -27,6 +27,14 @@ const typeDefs = gql`
     createdAt: Date
   }
 
+  type PurpleAirReading {
+    pm10: Int
+    pm25: Int
+    pm100: Int
+    temperature: Float
+    createdAt: Date
+  }
+
   type GasReading {
     temperature: Float
     relativeHumidity: Float
@@ -36,7 +44,7 @@ const typeDefs = gql`
 
   type PurpleAir {
     createdAt: Date
-    lakemontPines: AirReading
+    lakemontPines: PurpleAirReading
   }
 
   type Query {

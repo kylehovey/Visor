@@ -2,19 +2,22 @@ const axios = require('axios');
 
 const { pubsub, topics } = require('..');
 
+const { PURPLE_AIR_DATA_URL } = process.env;
+
 const run = () => axios
-  .get('https://www.purpleair.com/json?show=30051')
+  .get(PURPLE_AIR_DATA_URL)
   .then(({
     data: {
       results: [{
         pm1_0_atm: rawPm10,
         pm2_5_atm: rawPm25,
         pm10_0_atm: rawPm100,
+        temp_f: temperatureFarenheit,
       }],
     },
-  }) => [rawPm10, rawPm25, rawPm100])
+  }) => [rawPm10, rawPm25, rawPm100, temperatureFarenheit])
   .then((data) => data.map((x) => Math.round(parseFloat(x))))
-  .then(([pm10, pm25, pm100]) => pubsub.publish(
+  .then(([pm10, pm25, pm100, temperatureFarenheit]) => pubsub.publish(
     topics.PURPLE_AIR_TOPIC,
     {
       purpleAir: {
@@ -23,6 +26,7 @@ const run = () => axios
           pm10,
           pm25,
           pm100,
+          temperature: (temperatureFarenheit - 32) * (5 / 9),
           createdAt: Date.now(),
         },
       },
@@ -49,6 +53,7 @@ const mock = async () => {
           pm10: Math.round(mockValue / 10),
           pm25: Math.round(mockValue / 2),
           pm100: mockValue,
+          temperature: Math.round(50 + mockValue / 2),
         },
       },
     },
