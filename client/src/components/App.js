@@ -393,7 +393,7 @@ const App = () => {
     />,
     () => <AirChart
       title={`Outside Temperature: ${currentOutsideTemperature.toFixed(2)}˚F`}
-      values={(console.log(outsideTemperatureHistory), outsideTemperatureHistory)}
+      values={outsideTemperatureHistory}
       color={outsideTemperatureColor}
     />,
 
