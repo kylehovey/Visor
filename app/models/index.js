@@ -34,6 +34,7 @@ const LakemontPinesAirReading = connector.define('lakemontPinesAirReadings', {
   },
   ...timestamps,
   ...particulateMeasurements,
+  temperature: Sequelize.FLOAT,
 });
 
 const AirReading = connector.define('airReadings', {
