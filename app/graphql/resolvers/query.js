@@ -83,15 +83,23 @@ const Query = {
       include: models.PurpleAirReading.LakemontPinesAirReading,
     });
 
-    return readings.map(
-      ({
-        lakemontPinesAirReading,
-        createdAt,
-      }) => ({
-        lakemontPines: lakemontPinesAirReading,
-        createdAt: (+new Date(createdAt)),
-      }),
-    );
+    return readings
+      /**
+       * Sequelize didn't add a foriegn key constraint, and I didn't use a transaction
+       * to create the air reading data, so I think that this resulted in many purpleAirReading's
+       * not having a corresponding lakemontPinesAirReading. The query to delete the erroneous
+       * data takes too long to execute on the database, so we are just hacking this in here.
+       */
+      .filter(({ lakemontPinesAirReading }) => lakemontPinesAirReading !== null)
+      .map(
+        ({
+          lakemontPinesAirReading,
+          createdAt,
+        }) => ({
+          lakemontPines: lakemontPinesAirReading,
+          createdAt: (+new Date(createdAt)),
+        }),
+      );
   },
 };
 
