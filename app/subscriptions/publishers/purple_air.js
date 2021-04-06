@@ -4,7 +4,7 @@ const { pubsub, topics } = require('..');
 
 const { PURPLE_AIR_DATA_URL } = process.env;
 
-const run = () => axios
+const purplePipeline = () => axios
   .get(PURPLE_AIR_DATA_URL)
   .then(({
     data: {
@@ -31,11 +31,20 @@ const run = () => axios
         },
       },
     },
-  ))
-  /* eslint-disable-next-line no-console */
-  .catch(console.log)
-  .then(() => new Promise((r) => setTimeout(r, 5000)))
-  .then(run);
+  ));
+
+const run = async () => {
+  try {
+    await purplePipeline();
+  } catch (err) {
+    /* eslint-disable-next-line no-console */
+    console.log(err);
+  }
+
+  await new Promise((r) => setTimeout(r, 5e3));
+
+  setTimeout(run, 0);
+};
 
 const mock = async () => {
   const mockValue = Number.parseInt(
