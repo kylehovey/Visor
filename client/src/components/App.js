@@ -42,9 +42,22 @@ export const SUBSCRIBE_GAS_READING = gql`
   }
 `;
 
-export const SUBSCRIBE_PURPLE_AIR = gql`
-  subscription PurpleAir {
-    purpleAir {
+//export const SUBSCRIBE_PURPLE_AIR = gql`
+//  subscription PurpleAir {
+//    purpleAir {
+//      createdAt
+//      lakemontPines {
+//        pm10
+//        pm25
+//        pm100
+//        temperature
+//      }
+//    }
+//  }
+//`;
+
+/**
+    purpleAir(timeFrom: $timeFrom, timeTo: $timeTo) {
       createdAt
       lakemontPines {
         pm10
@@ -53,8 +66,7 @@ export const SUBSCRIBE_PURPLE_AIR = gql`
         temperature
       }
     }
-  }
-`;
+ */
 
 export const GET_AIR_READINGS = gql`
   query AirReadings($timeFrom: Date!, $timeTo: Date!) {
@@ -69,15 +81,6 @@ export const GET_AIR_READINGS = gql`
       pm10
       pm25
       pm100
-    }
-    purpleAir(timeFrom: $timeFrom, timeTo: $timeTo) {
-      createdAt
-      lakemontPines {
-        pm10
-        pm25
-        pm100
-        temperature
-      }
     }
   }
 `;
@@ -125,16 +128,16 @@ const App = () => {
     { x: 5, y: 0, w: 2, h: 2 },
     { x: 7, y: 0, w: 2, h: 2 },
     { x: 9, y: 0, w: 2, h: 2 },
-    { x: 11, y: 0, w: 2, h: 2 },
+    //{ x: 11, y: 0, w: 2, h: 2 },
 
     { x: 0, y: 4, w: 8, h: 9 },
     { x: 8, y: 4, w: 8, h: 9 },
     { x: 0, y: 13, w: 8, h: 9 },
     { x: 8, y: 13, w: 8, h: 9 },
-    { x: 0, y: 21, w: 8, h: 9 },
-    { x: 8, y: 21, w: 8, h: 9 },
+    //{ x: 0, y: 21, w: 8, h: 9 },
+    //{ x: 8, y: 21, w: 8, h: 9 },
 
-    ...(new Array(9)).fill().map((_, x) => ({ x, y: 2, w: 1, h: 2 })),
+    ...(new Array(9)).fill().map((_, x) => ({ x: x * 2, y: 2, w: 2, h: 2 })),
   ].map((base, i) => ({ ...base, i: i.toString() })));
 
   useEffect(() => {
@@ -186,29 +189,29 @@ const App = () => {
     },
   });
 
-  const { error: purpleAirError, } = useSubscription(SUBSCRIBE_PURPLE_AIR, {
-    onSubscriptionData: ({ subscriptionData }) => {
-      const {
-        data: {
-          purpleAir: {
-            createdAt: time,
-            lakemontPines: {
-              pm25,
-              temperature,
-            },
-          },
-        },
-      } = subscriptionData;
+  //const { error: purpleAirError, } = useSubscription(SUBSCRIBE_PURPLE_AIR, {
+  //  onSubscriptionData: ({ subscriptionData }) => {
+  //    const {
+  //      data: {
+  //        purpleAir: {
+  //          createdAt: time,
+  //          lakemontPines: {
+  //            pm25,
+  //            temperature,
+  //          },
+  //        },
+  //      },
+  //    } = subscriptionData;
 
-      setOutsidePm25History([...outsidePm25History, { value: pm25, time }]);
-      setOutsideTemperatureHistory([
-        ...outsideTemperatureHistory,
-        { value: asFreedom(temperature), time },
-      ]);
-      setCurrentOutsidePm25(pm25);
-      setCurrentOutsideTemperature(asFreedom(temperature));
-    },
-  });
+  //    setOutsidePm25History([...outsidePm25History, { value: pm25, time }]);
+  //    setOutsideTemperatureHistory([
+  //      ...outsideTemperatureHistory,
+  //      { value: asFreedom(temperature), time },
+  //    ]);
+  //    setCurrentOutsidePm25(pm25);
+  //    setCurrentOutsideTemperature(asFreedom(temperature));
+  //  },
+  //});
 
   const {
     loading: tradfriLoading,
@@ -221,10 +224,10 @@ const App = () => {
       timeFrom,
       timeTo,
     },
-    onCompleted: ({ airReading, gasReading, purpleAir }) => {
+    onCompleted: ({ airReading, gasReading, /*purpleAir*/ }) => {
       const [ latest ] = airReading.slice(-1);
       const [ latestGas ] = gasReading.slice(-1);
-      const [ latestOutside ] = purpleAir.slice(-1);
+      //const [ latestOutside ] = purpleAir.slice(-1);
 
       setCarbonDioxideHistory(gasReading.map(({
         carbonDioxide: value,
@@ -244,22 +247,22 @@ const App = () => {
       setPm10History(airReading.map(({ pm10: value, createdAt: time }) => ({ value, time })));
       setPm25History(airReading.map(({ pm25: value, createdAt: time }) => ({ value, time })));
       setPm100History(airReading.map(({ pm100: value, createdAt: time }) => ({ value, time })));
-      setOutsideTemperatureHistory([
-        ...purpleAir.map(({
-          lakemontPines: {
-            temperature: value,
-          },
-          createdAt: time,
-        }) => ({ value: asFreedom(value), time })),
-      ]);
-      setOutsidePm25History([
-        ...purpleAir.map(({
-          lakemontPines: {
-            pm25: value,
-          },
-          createdAt: time,
-        }) => ({ value, time })),
-      ]);
+      //setOutsideTemperatureHistory([
+      //  ...purpleAir.map(({
+      //    lakemontPines: {
+      //      temperature: value,
+      //    },
+      //    createdAt: time,
+      //  }) => ({ value: asFreedom(value), time })),
+      //]);
+      //setOutsidePm25History([
+      //  ...purpleAir.map(({
+      //    lakemontPines: {
+      //      pm25: value,
+      //    },
+      //    createdAt: time,
+      //  }) => ({ value, time })),
+      //]);
 
       if (currentGasReading === null && latestGas !== undefined) {
         setCurrentGasReading(latestGas);
@@ -269,28 +272,27 @@ const App = () => {
         setCurrent(latest);
       }
 
-      if (currentOutsidePm25 === null && latestOutside !== undefined) {
-        setCurrentOutsidePm25(latestOutside.lakemontPines.pm25);
-      }
+      //if (currentOutsidePm25 === null && latestOutside !== undefined) {
+      //  setCurrentOutsidePm25(latestOutside.lakemontPines.pm25);
+      //}
 
-      if (currentOutsideTemperature === null && latestOutside !== undefined) {
-        setCurrentOutsideTemperature(asFreedom(latestOutside.lakemontPines.temperature));
-      }
+      //if (currentOutsideTemperature === null && latestOutside !== undefined) {
+      //  setCurrentOutsideTemperature(asFreedom(latestOutside.lakemontPines.temperature));
+      //}
     },
   });
 
   if (
     tradfriLoading ||
     current === null ||
-    currentGasReading === null ||
-    currentOutsideTemperature === null
+    currentGasReading === null
   ) {
     return 'Loading...';
   }
 
   if (gasSensorError) return JSON.stringify(gasSensorError);
   if (airSensorError) return JSON.stringify(airSensorError);
-  if (purpleAirError) return JSON.stringify(purpleAirError);
+  //if (purpleAirError) return JSON.stringify(purpleAirError);
   if (tradfriError) return JSON.stringify(tradfriError);
 
   const { pm25 } = current;
@@ -319,12 +321,12 @@ const App = () => {
       units="µg/m³"
       color={pm25Color}
     />,
-    () => <Average
-      values={valuesOf(outsidePm25History)}
-      title="Outdoor PM2.5"
-      units="µg/m³"
-      color={outsidePm25Color}
-    />,
+    //() => <Average
+    //  values={valuesOf(outsidePm25History)}
+    //  title="Outdoor PM2.5"
+    //  units="µg/m³"
+    //  color={outsidePm25Color}
+    ///>,
     () => <Average
       values={valuesOf(carbonDioxideHistory)}
       title="CO2"
@@ -371,11 +373,11 @@ const App = () => {
     //  values={pm100History}
     //  color={pm100Color}
     ///>,
-    () => <AirChart
-      title={`Outside PM2.5: ${currentOutsidePm25}µg/m³`}
-      values={outsidePm25History}
-      color={outsidePm25Color}
-    />,
+    //() => <AirChart
+    //  title={`Outside PM2.5: ${currentOutsidePm25 || 0}µg/m³`}
+    //  values={outsidePm25History}
+    //  color={outsidePm25Color}
+    ///>,
     () => <AirChart
       title={`CO2: ${carbonDioxide.toFixed(2)}ppm`}
       values={carbonDioxideHistory}
@@ -391,11 +393,11 @@ const App = () => {
       values={relativeHumidityHistory}
       color={relativeHumidityColor}
     />,
-    () => <AirChart
-      title={`Outside Temperature: ${currentOutsideTemperature.toFixed(2)}˚F`}
-      values={outsideTemperatureHistory}
-      color={outsideTemperatureColor}
-    />,
+    //() => <AirChart
+    //  title={`Outside Temperature: ${currentOutsideTemperature.toFixed(2)}˚F`}
+    //  values={outsideTemperatureHistory}
+    //  color={outsideTemperatureColor}
+    ///>,
 
     ...bulbs.map((bulb) => () => (
       <TradfriToggle
