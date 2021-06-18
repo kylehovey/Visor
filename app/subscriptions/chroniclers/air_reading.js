@@ -33,23 +33,27 @@ const stow = () => {
 (async (stream) => {
   /* eslint-disable-next-line no-restricted-syntax */
   for await (const { airReading } of stream) {
-    const {
-      pm10,
-      pm25,
-      pm100,
-      createdAt,
-    } = airReading;
-    const { pm10: a10, pm25: a25, pm100: a100 } = average;
+    try {
+      const {
+        pm10,
+        pm25,
+        pm100,
+        createdAt,
+      } = airReading;
+      const { pm10: a10, pm25: a25, pm100: a100 } = average;
 
-    lastTime = createdAt;
-    average = {
-      pm10: (samples * a10 + pm10) / (samples + 1),
-      pm25: (samples * a25 + pm25) / (samples + 1),
-      pm100: (samples * a100 + pm100) / (samples + 1),
-    };
+      lastTime = createdAt;
+      average = {
+        pm10: (samples * a10 + pm10) / (samples + 1),
+        pm25: (samples * a25 + pm25) / (samples + 1),
+        pm100: (samples * a100 + pm100) / (samples + 1),
+      };
 
-    samples += 1;
+      samples += 1;
 
-    if (samples === window) stow();
+      if (samples === window) stow();
+    } catch (err) {
+      console.log(err);
+    }
   }
 })(pubsub.asyncIterator(topics.AIR_READING_TOPIC));

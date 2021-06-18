@@ -29,27 +29,31 @@ const stow = () => {
 (async (stream) => {
   /* eslint-disable-next-line no-restricted-syntax */
   for await (const { gasReading } of stream) {
-    const {
-      carbonDioxide,
-      temperature,
-      relativeHumidity,
-      createdAt,
-    } = gasReading;
-    const {
-      carbonDioxide: aCD,
-      temperature: aT,
-      relativeHumidity: aRH,
-    } = average;
+    try {
+      const {
+        carbonDioxide,
+        temperature,
+        relativeHumidity,
+        createdAt,
+      } = gasReading;
+      const {
+        carbonDioxide: aCD,
+        temperature: aT,
+        relativeHumidity: aRH,
+      } = average;
 
-    lastTime = createdAt;
-    average = {
-      carbonDioxide: (samples * aCD + carbonDioxide) / (samples + 1),
-      temperature: (samples * aT + temperature) / (samples + 1),
-      relativeHumidity: (samples * aRH + relativeHumidity) / (samples + 1),
-    };
+      lastTime = createdAt;
+      average = {
+        carbonDioxide: (samples * aCD + carbonDioxide) / (samples + 1),
+        temperature: (samples * aT + temperature) / (samples + 1),
+        relativeHumidity: (samples * aRH + relativeHumidity) / (samples + 1),
+      };
 
-    samples += 1;
+      samples += 1;
 
-    if (samples === window) stow();
+      if (samples === window) stow();
+    } catch (err) {
+      console.log(err);
+    }
   }
 })(pubsub.asyncIterator(topics.GAS_READING_TOPIC));
