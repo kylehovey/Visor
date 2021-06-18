@@ -18,6 +18,7 @@ const typeDefs = gql`
   type TradfriDeviceResult {
     bulbs: [TradfriDevice]
     plugs: [TradfriDevice]
+    switches: [TradfriDevice]
   }
 
   type AirReading {

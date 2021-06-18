@@ -75,6 +75,7 @@ class Client extends TradfriClient {
         const type = ((_info) => {
           if (/bulb/.test(_info)) return 'bulb';
           if (/outlet/.test(_info)) return 'plug';
+          if (/switch/.test(_info)) return 'switch';
 
           throw new Error('Unexpected device encountered');
         })(info);
@@ -98,14 +99,19 @@ class Client extends TradfriClient {
           return { ...base, status };
         }
 
+        if (type === 'switch') {
+          return { ...base };
+        }
+
         throw new Error('Unhandled device type');
       }),
     );
 
     const bulbs = devices.filter(({ type }) => type === 'bulb');
     const plugs = devices.filter(({ type }) => type === 'plug');
+    const switches = devices.filter(({ type }) => type === 'switches');
 
-    return { plugs, bulbs };
+    return { plugs, bulbs, switches };
   }
 }
 
