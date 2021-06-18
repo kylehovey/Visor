@@ -36,14 +36,14 @@ const purplePipeline = () => axios
 const run = async () => {
   try {
     await purplePipeline();
+
+    setTimeout(run, 5e3);
   } catch (err) {
     /* eslint-disable-next-line no-console */
     console.log(err);
+
+    setTimeout(run, 30000);
   }
-
-  await new Promise((r) => setTimeout(r, 5e3));
-
-  setTimeout(run, 0);
 };
 
 const mock = async () => {
