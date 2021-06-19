@@ -12,11 +12,13 @@ if (process.env.NODE_ENV === 'production') {
 
   try {
     parser.on('data', (data, ...rest) => {
+      const payload = JSON.parse(data);
       pubsub.publish(
         topics.INDOOR_AIR_QUALITY_TOPIC,
         {
           indoorAirQuality: {
-            ...JSON.parse(data),
+            ...payload,
+            gasResistance: payload.gasResistance/1000,
             createdAt: Date.now(),
           },
         },
