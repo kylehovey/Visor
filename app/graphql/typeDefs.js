@@ -55,6 +55,7 @@ const typeDefs = gql`
     staticIaq: Float,
     CO2: Float,
     breathVOC: Float,
+    createdAt: Date
   }
 
   type PurpleAir {
