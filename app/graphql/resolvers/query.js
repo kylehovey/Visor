@@ -83,9 +83,32 @@ const Query = {
     });
 
     return readings.map(
-      ({ createdAt, ...rest }) => ({
+      ({
+        createdAt,
+        rawTemperature,
+        pressure,
+        rawHumidity,
+        gasResistance,
+        iaq,
+        iaqAccuracy,
+        temperature,
+        humidity,
+        staticIaq,
+        CO2,
+        breathVOC,
+      }) => ({
         createdAt: +(new Date(createdAt)),
-        ...rest,
+        rawTemperature,
+        pressure,
+        rawHumidity,
+        gasResistance,
+        iaq,
+        iaqAccuracy,
+        temperature,
+        humidity,
+        staticIaq,
+        CO2,
+        breathVOC,
       }),
     );
   },
