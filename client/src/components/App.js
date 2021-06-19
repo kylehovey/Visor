@@ -13,9 +13,7 @@ const carbonDioxideColor = "#689d6a";
 const temperatureColor = "#fb4934";
 const VOCColor = "#b16286";
 const relativeHumidityColor = "#458588";
-const pm10Color = "#b16286";
 const pm25Color = "#d3869b";
-const pm100Color = "#f38019";
 const iaqColor = "#fabd2f";
 
 const valuesOf = (data) => data.map(({ value }) => value);
@@ -132,6 +130,7 @@ const App = () => {
   useEffect(() => {
     setTimeFrom(timeTo - hoursBack * 60 * 60e3);
     setTimeTo(Date.now());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hoursBack]);
 
   const { error: gasSensorError, } = useSubscription(SUBSCRIBE_GAS_READING, {
