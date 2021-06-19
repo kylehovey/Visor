@@ -46,7 +46,7 @@ export const SUBSCRIBE_IAQ = gql`
   subscription IndoorAirQuality {
     indoorAirQuality {
       createdAt
-      iaq
+      staticIaq
       gasResistance
     }
   }
@@ -68,7 +68,7 @@ export const GET_AIR_READINGS = gql`
     }
     indoorAirQuality(timeFrom: $timeFrom, timeTo: $timeTo) {
       createdAt
-      iaq
+      staticIaq
       gasResistance
     }
   }
@@ -184,18 +184,18 @@ const App = () => {
         data: {
           indoorAirQuality: {
             createdAt: time,
-            iaq,
+            staticIaq,
             gasResistance,
           },
         },
       } = subscriptionData;
 
-      setIaqHistory([...iaqHistory, { value: iaq, time }]);
+      setIaqHistory([...iaqHistory, { value: staticIaq, time }]);
       setGasResistanceHistory([
         ...gasResistanceHistory,
         { value: gasResistance, time },
       ]);
-      setCurrentIaq(iaq);
+      setCurrentIaq(staticIaq);
       setCurrentGasResistance(gasResistance);
     },
   });
@@ -242,7 +242,7 @@ const App = () => {
       ]);
       setIaqHistory([
         ...indoorAirQuality.map(({
-          iaq: value,
+          staticIaq: value,
           createdAt: time,
         }) => ({ value, time })),
       ]);
@@ -256,7 +256,7 @@ const App = () => {
       }
 
       if (currentIaq === null && latestIndoorAirQuality !== undefined) {
-        setCurrentIaq(indoorAirQuality.iaq);
+        setCurrentIaq(indoorAirQuality.staticIaq);
       }
 
       if (currentGasResistance === null && latestIndoorAirQuality !== undefined) {
@@ -307,7 +307,7 @@ const App = () => {
       color={pm25Color}
     />,
     () => <Average
-      values={(console.log(iaqHistory), valuesOf(iaqHistory))}
+      values={valuesOf(iaqHistory)}
       title="IAQ"
       units=""
       color={iaqColor}
