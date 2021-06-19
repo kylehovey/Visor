@@ -51,6 +51,24 @@ const GasReading = connector.define('gasReadings', {
   relativeHumidity: Sequelize.FLOAT,
 });
 
+const IndoorAirQuality = connector.define('indoorAirQuality', {
+  id,
+  ...timestamps,
+  rawTemperature: Sequelize.FLOAT,
+  pressure: Sequelize.FLOAT,
+  rawHumidity: Sequelize.FLOAT,
+  gasResistance: Sequelize.FLOAT,
+  iaq: Sequelize.FLOAT,
+  iaqAccuracy: Sequelize.FLOAT,
+  temperature: Sequelize.FLOAT,
+  humidity: Sequelize.FLOAT,
+  staticIaq: Sequelize.FLOAT,
+  CO2: Sequelize.FLOAT,
+  breathVOC: Sequelize.FLOAT,
+}, {
+  tableName: 'indoorAirQuality',
+});
+
 PurpleAirReading.LakemontPinesAirReading = PurpleAirReading.hasOne(LakemontPinesAirReading);
 LakemontPinesAirReading.PurpleAirReading = LakemontPinesAirReading.belongsTo(PurpleAirReading);
 
@@ -59,4 +77,5 @@ module.exports = {
   PurpleAirReading,
   LakemontPinesAirReading,
   GasReading,
+  IndoorAirQuality,
 };

@@ -20,6 +20,13 @@ const Subscription = {
       return pubsub.asyncIterator([topics.GAS_READING_TOPIC]);
     },
   },
+  indoorAirQuality: {
+    subscribe: (root, variables, context) => {
+      const { pubsub, topics } = context;
+
+      return pubsub.asyncIterator([topics.INDOOR_AIR_QUALITY_TOPIC]);
+    },
+  },
 };
 
 module.exports = { Subscription };

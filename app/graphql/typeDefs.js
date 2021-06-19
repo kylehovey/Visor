@@ -43,6 +43,20 @@ const typeDefs = gql`
     createdAt: Date
   }
 
+  type IndoorAirQuality {
+    rawTemperature: Float,
+    pressure: Float,
+    rawHumidity: Float,
+    gasResistance: Float,
+    iaq: Float,
+    iaqAccuracy: Float,
+    temperature: Float,
+    humidity: Float,
+    staticIaq: Float,
+    CO2: Float,
+    breathVOC: Float,
+  }
+
   type PurpleAir {
     createdAt: Date
     lakemontPines: PurpleAirReading
@@ -52,12 +66,14 @@ const typeDefs = gql`
     tradfriDevices: TradfriDeviceResult
     airReading(timeFrom: Date!, timeTo: Date!): [AirReading]
     gasReading(timeFrom: Date!, timeTo: Date!): [GasReading]
+    indoorAirQuality(timeFrom: Date!, timeTo: Date!): [IndoorAirQuality]
     purpleAir(timeFrom: Date!, timeTo: Date!): [PurpleAir]
   }
 
   type Subscription {
     airReading: AirReading
     gasReading: GasReading
+    indoorAirQuality: IndoorAirQuality
     purpleAir: PurpleAir
   }
 

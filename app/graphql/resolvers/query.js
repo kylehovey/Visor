@@ -66,6 +66,29 @@ const Query = {
       }),
     );
   },
+  async indoorAirQuality(root, variables, context) {
+    const { models } = context;
+    const { timeFrom, timeTo } = variables;
+
+    const readings = await models.IndoorAirQuality.findAll({
+      where: {
+        createdAt: {
+          [Op.between]: [
+            timeFrom,
+            timeTo,
+          ],
+        },
+      },
+      order: [['createdAt', 'ASC']],
+    });
+
+    return readings.map(
+      ({ createdAt, ...rest }) => ({
+        createdAt: +(new Date(createdAt)),
+        ...rest,
+      }),
+    );
+  },
   async purpleAir(root, variables, context) {
     const { models } = context;
     const { timeFrom, timeTo } = variables;
