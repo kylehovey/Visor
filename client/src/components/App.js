@@ -11,12 +11,12 @@ const asFreedom = c => (c * 9/5) + 32;
 
 const carbonDioxideColor = "#689d6a";
 const temperatureColor = "#fb4934";
-const outsideTemperatureColor = "#b16286";
+const gasResistanceColor = "#b16286";
 const relativeHumidityColor = "#458588";
 const pm10Color = "#b16286";
 const pm25Color = "#d3869b";
 const pm100Color = "#f38019";
-const outsidePm25Color = "#fabd2f";
+const iaqColor = "#fabd2f";
 
 const valuesOf = (data) => data.map(({ value }) => value);
 
@@ -42,31 +42,15 @@ export const SUBSCRIBE_GAS_READING = gql`
   }
 `;
 
-//export const SUBSCRIBE_PURPLE_AIR = gql`
-//  subscription PurpleAir {
-//    purpleAir {
-//      createdAt
-//      lakemontPines {
-//        pm10
-//        pm25
-//        pm100
-//        temperature
-//      }
-//    }
-//  }
-//`;
-
-/**
-    purpleAir(timeFrom: $timeFrom, timeTo: $timeTo) {
+export const SUBSCRIBE_IAQ = gql`
+  subscription IndoorAirQuality {
+    indoorAirQuality {
       createdAt
-      lakemontPines {
-        pm10
-        pm25
-        pm100
-        temperature
-      }
+      iaq
+      gasResistance
     }
- */
+  }
+`;
 
 export const GET_AIR_READINGS = gql`
   query AirReadings($timeFrom: Date!, $timeTo: Date!) {
@@ -81,6 +65,11 @@ export const GET_AIR_READINGS = gql`
       pm10
       pm25
       pm100
+    }
+    indoorAirQuality(timeFrom: $timeFrom, timeTo: $timeTo) {
+      createdAt
+      iaq
+      gasResistance
     }
   }
 `;
@@ -110,16 +99,16 @@ const App = () => {
   const [ timeFrom, setTimeFrom ] = useState(timeTo - hoursBack * 60 * 60e3);
   const [ current, setCurrent ] = useState(null);
   const [ currentGasReading, setCurrentGasReading] = useState(null);
-  const [ currentOutsidePm25, setCurrentOutsidePm25 ] = useState(null);
-  const [ currentOutsideTemperature, setCurrentOutsideTemperature ] = useState(null);
+  const [ currentIaq, setCurrentIaq ] = useState(null);
+  const [ currentGasResistance, setCurrentGasResistance ] = useState(null);
   const [ carbonDioxideHistory, setCarbonDioxideHistory ] = useState([]);
   const [ temperatureHistory, setTemperatureHistory ] = useState([]);
   const [ relativeHumidityHistory, setRelativeHumidityHistory ] = useState([]);
   const [ pm10History, setPm10History ] = useState([]);
   const [ pm25History, setPm25History ] = useState([]);
   const [ pm100History, setPm100History ] = useState([]);
-  const [ outsidePm25History, setOutsidePm25History ] = useState([]);
-  const [ outsideTemperatureHistory, setOutsideTemperatureHistory ] = useState([]);
+  const [ iaqHistory, setIaqHistory ] = useState([]);
+  const [ gasResistanceHistory, setGasResistanceHistory ] = useState([]);
   const [ layout, setLayout ] = useState([
     { x: 0, y: 0, w: 1, h: 2 },
 
@@ -128,14 +117,14 @@ const App = () => {
     { x: 5, y: 0, w: 2, h: 2 },
     { x: 7, y: 0, w: 2, h: 2 },
     { x: 9, y: 0, w: 2, h: 2 },
-    //{ x: 11, y: 0, w: 2, h: 2 },
+    { x: 11, y: 0, w: 2, h: 2 },
 
     { x: 0, y: 4, w: 8, h: 9 },
     { x: 8, y: 4, w: 8, h: 9 },
     { x: 0, y: 13, w: 8, h: 9 },
     { x: 8, y: 13, w: 8, h: 9 },
-    //{ x: 0, y: 21, w: 8, h: 9 },
-    //{ x: 8, y: 21, w: 8, h: 9 },
+    { x: 0, y: 21, w: 8, h: 9 },
+    { x: 8, y: 21, w: 8, h: 9 },
 
     ...(new Array(9)).fill().map((_, x) => ({ x: x * 2, y: 2, w: 2, h: 2 })),
   ].map((base, i) => ({ ...base, i: i.toString() })));
@@ -189,29 +178,27 @@ const App = () => {
     },
   });
 
-  //const { error: purpleAirError, } = useSubscription(SUBSCRIBE_PURPLE_AIR, {
-  //  onSubscriptionData: ({ subscriptionData }) => {
-  //    const {
-  //      data: {
-  //        purpleAir: {
-  //          createdAt: time,
-  //          lakemontPines: {
-  //            pm25,
-  //            temperature,
-  //          },
-  //        },
-  //      },
-  //    } = subscriptionData;
+  const { error: indoorAirQualityError, } = useSubscription(SUBSCRIBE_IAQ, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      const {
+        data: {
+          indoorAirQuality: {
+            createdAt: time,
+            iaq,
+            gasResistance,
+          },
+        },
+      } = subscriptionData;
 
-  //    setOutsidePm25History([...outsidePm25History, { value: pm25, time }]);
-  //    setOutsideTemperatureHistory([
-  //      ...outsideTemperatureHistory,
-  //      { value: asFreedom(temperature), time },
-  //    ]);
-  //    setCurrentOutsidePm25(pm25);
-  //    setCurrentOutsideTemperature(asFreedom(temperature));
-  //  },
-  //});
+      setIaqHistory([...iaqHistory, { value: iaq, time }]);
+      setGasResistanceHistory([
+        ...gasResistanceHistory,
+        { value: gasResistance, time },
+      ]);
+      setCurrentIaq(iaq);
+      setCurrentGasResistance(gasResistance);
+    },
+  });
 
   const {
     loading: tradfriLoading,
@@ -224,10 +211,10 @@ const App = () => {
       timeFrom,
       timeTo,
     },
-    onCompleted: ({ airReading, gasReading, /*purpleAir*/ }) => {
+    onCompleted: ({ airReading, gasReading, indoorAirQuality }) => {
       const [ latest ] = airReading.slice(-1);
       const [ latestGas ] = gasReading.slice(-1);
-      //const [ latestOutside ] = purpleAir.slice(-1);
+      const [ latestIndoorAirQuality ] = indoorAirQuality.slice(-1);
 
       setCarbonDioxideHistory(gasReading.map(({
         carbonDioxide: value,
@@ -247,22 +234,18 @@ const App = () => {
       setPm10History(airReading.map(({ pm10: value, createdAt: time }) => ({ value, time })));
       setPm25History(airReading.map(({ pm25: value, createdAt: time }) => ({ value, time })));
       setPm100History(airReading.map(({ pm100: value, createdAt: time }) => ({ value, time })));
-      //setOutsideTemperatureHistory([
-      //  ...purpleAir.map(({
-      //    lakemontPines: {
-      //      temperature: value,
-      //    },
-      //    createdAt: time,
-      //  }) => ({ value: asFreedom(value), time })),
-      //]);
-      //setOutsidePm25History([
-      //  ...purpleAir.map(({
-      //    lakemontPines: {
-      //      pm25: value,
-      //    },
-      //    createdAt: time,
-      //  }) => ({ value, time })),
-      //]);
+      setGasResistanceHistory([
+        ...indoorAirQuality.map(({
+          gasResistance: value,
+          createdAt: time,
+        }) => ({ value, time })),
+      ]);
+      setIaqHistory([
+        ...indoorAirQuality.map(({
+          iaq: value,
+          createdAt: time,
+        }) => ({ value, time })),
+      ]);
 
       if (currentGasReading === null && latestGas !== undefined) {
         setCurrentGasReading(latestGas);
@@ -272,27 +255,29 @@ const App = () => {
         setCurrent(latest);
       }
 
-      //if (currentOutsidePm25 === null && latestOutside !== undefined) {
-      //  setCurrentOutsidePm25(latestOutside.lakemontPines.pm25);
-      //}
+      if (currentIaq === null && latestIndoorAirQuality !== undefined) {
+        setCurrentIaq(indoorAirQuality.iaq);
+      }
 
-      //if (currentOutsideTemperature === null && latestOutside !== undefined) {
-      //  setCurrentOutsideTemperature(asFreedom(latestOutside.lakemontPines.temperature));
-      //}
+      if (currentGasResistance === null && latestIndoorAirQuality !== undefined) {
+        setCurrentGasResistance(latestIndoorAirQuality.gasResistance);
+      }
     },
   });
 
   if (
     tradfriLoading ||
     current === null ||
-    currentGasReading === null
+    currentGasReading === null ||
+    currentIaq === null ||
+    currentGasResistance === null
   ) {
     return 'Loading...';
   }
 
   if (gasSensorError) return JSON.stringify(gasSensorError);
   if (airSensorError) return JSON.stringify(airSensorError);
-  //if (purpleAirError) return JSON.stringify(purpleAirError);
+  if (indoorAirQualityError) return JSON.stringify(indoorAirQualityError);
   if (tradfriError) return JSON.stringify(tradfriError);
 
   const { pm25 } = current;
@@ -321,12 +306,12 @@ const App = () => {
       units="µg/m³"
       color={pm25Color}
     />,
-    //() => <Average
-    //  values={valuesOf(outsidePm25History)}
-    //  title="Outdoor PM2.5"
-    //  units="µg/m³"
-    //  color={outsidePm25Color}
-    ///>,
+    () => <Average
+      values={(console.log(iaqHistory), valuesOf(iaqHistory))}
+      title="IAQ"
+      units=""
+      color={iaqColor}
+    />,
     () => <Average
       values={valuesOf(carbonDioxideHistory)}
       title="CO2"
@@ -368,16 +353,16 @@ const App = () => {
       values={pm25History}
       color={pm25Color}
     />,
-    //() => <AirChart
-    //  title={`PM10.0: ${pm100}µg/m³`}
-    //  values={pm100History}
-    //  color={pm100Color}
-    ///>,
-    //() => <AirChart
-    //  title={`Outside PM2.5: ${currentOutsidePm25 || 0}µg/m³`}
-    //  values={outsidePm25History}
-    //  color={outsidePm25Color}
-    ///>,
+    () => <AirChart
+      title={`Indoor AQI: ${currentIaq}`}
+      values={iaqHistory}
+      color={iaqColor}
+    />,
+    () => <AirChart
+      title={`Gas Resistance: ${currentGasResistance}Ω`}
+      values={gasResistanceHistory}
+      color={gasResistanceColor}
+    />,
     () => <AirChart
       title={`CO2: ${carbonDioxide.toFixed(2)}ppm`}
       values={carbonDioxideHistory}
