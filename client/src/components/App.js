@@ -11,7 +11,7 @@ const asFreedom = c => (c * 9/5) + 32;
 
 const carbonDioxideColor = "#689d6a";
 const temperatureColor = "#fb4934";
-const gasResistanceColor = "#b16286";
+const VOCColor = "#b16286";
 const relativeHumidityColor = "#458588";
 const pm10Color = "#b16286";
 const pm25Color = "#d3869b";
@@ -47,7 +47,7 @@ export const SUBSCRIBE_IAQ = gql`
     indoorAirQuality {
       createdAt
       staticIaq
-      gasResistance
+      breathVOC
     }
   }
 `;
@@ -69,7 +69,7 @@ export const GET_AIR_READINGS = gql`
     indoorAirQuality(timeFrom: $timeFrom, timeTo: $timeTo) {
       createdAt
       staticIaq
-      gasResistance
+      breathVOC
     }
   }
 `;
@@ -100,7 +100,7 @@ const App = () => {
   const [ current, setCurrent ] = useState(null);
   const [ currentGasReading, setCurrentGasReading] = useState(null);
   const [ currentIaq, setCurrentIaq ] = useState(null);
-  const [ currentGasResistance, setCurrentGasResistance ] = useState(null);
+  const [ currentVOC, setCurrentVOC ] = useState(null);
   const [ carbonDioxideHistory, setCarbonDioxideHistory ] = useState([]);
   const [ temperatureHistory, setTemperatureHistory ] = useState([]);
   const [ relativeHumidityHistory, setRelativeHumidityHistory ] = useState([]);
@@ -108,7 +108,7 @@ const App = () => {
   const [ pm25History, setPm25History ] = useState([]);
   const [ pm100History, setPm100History ] = useState([]);
   const [ iaqHistory, setIaqHistory ] = useState([]);
-  const [ gasResistanceHistory, setGasResistanceHistory ] = useState([]);
+  const [ VOCHistory, setVOCHistory ] = useState([]);
   const [ layout, setLayout ] = useState([
     { x: 0, y: 0, w: 1, h: 2 },
 
@@ -185,18 +185,18 @@ const App = () => {
           indoorAirQuality: {
             createdAt: time,
             staticIaq,
-            gasResistance,
+            breathVOC,
           },
         },
       } = subscriptionData;
 
       setIaqHistory([...iaqHistory, { value: staticIaq, time }]);
-      setGasResistanceHistory([
-        ...gasResistanceHistory,
-        { value: gasResistance, time },
+      setVOCHistory([
+        ...VOCHistory,
+        { value: breathVOC, time },
       ]);
       setCurrentIaq(staticIaq);
-      setCurrentGasResistance(gasResistance);
+      setCurrentVOC(breathVOC);
     },
   });
 
@@ -234,9 +234,9 @@ const App = () => {
       setPm10History(airReading.map(({ pm10: value, createdAt: time }) => ({ value, time })));
       setPm25History(airReading.map(({ pm25: value, createdAt: time }) => ({ value, time })));
       setPm100History(airReading.map(({ pm100: value, createdAt: time }) => ({ value, time })));
-      setGasResistanceHistory([
+      setVOCHistory([
         ...indoorAirQuality.map(({
-          gasResistance: value,
+          breathVOC: value,
           createdAt: time,
         }) => ({ value, time })),
       ]);
@@ -259,8 +259,8 @@ const App = () => {
         setCurrentIaq(indoorAirQuality.staticIaq);
       }
 
-      if (currentGasResistance === null && latestIndoorAirQuality !== undefined) {
-        setCurrentGasResistance(latestIndoorAirQuality.gasResistance);
+      if (currentVOC === null && latestIndoorAirQuality !== undefined) {
+        setCurrentVOC(latestIndoorAirQuality.breathVOC);
       }
     },
   });
@@ -270,7 +270,7 @@ const App = () => {
     current === null ||
     currentGasReading === null ||
     currentIaq === null ||
-    currentGasResistance === null
+    currentVOC === null
   ) {
     return 'Loading...';
   }
@@ -359,9 +359,9 @@ const App = () => {
       color={iaqColor}
     />,
     () => <AirChart
-      title={`Gas Resistance: ${currentGasResistance}Ω`}
-      values={gasResistanceHistory}
-      color={gasResistanceColor}
+      title={`tVOC: ${currentVOC}ppm`}
+      values={VOCHistory}
+      color={VOCColor}
     />,
     () => <AirChart
       title={`CO2: ${carbonDioxide.toFixed(2)}ppm`}
