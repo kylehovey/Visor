@@ -6,7 +6,7 @@ const window = Number.parseInt(
   10,
 );
 
-const nextAverage = (prevAvg, newValue, count) => (prevAvg * count + newValue) / (count + 1);
+const nextAverage = (newValue, prevAvg, count) => (prevAvg * count + newValue) / (count + 1);
 
 const init = {
   rawTemperature: 0,
