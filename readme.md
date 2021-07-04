@@ -1,11 +1,11 @@
 # Visor - Personal Home Dashboard
 
-![Visor Screenshot](https://user-images.githubusercontent.com/7339800/109727182-ba755900-7b68-11eb-8a54-24a2710eec46.png)
+![Visor Screenshot](https://github.com/kylehovey/Visor/blob/main/visor.png?raw=true)
 
 ## Features
 
 * Live indoor/outdoor particulate matter monitoring (PM1.0, PM2.5, PM100)
-* Live updates for CO2, Temperature, and Relative Humidity
+* Live updates for CO2, Temperature, VOC, IAQ, and Relative Humidity
 * [CoAP](https://github.com/glenndehaan/ikea-tradfri-coap-docs) control for smart plugs and lights
 * Persistent history of sensor data with adjustable timescales
 * GraphQL server (with [playground](https://github.com/graphql/graphql-playground))

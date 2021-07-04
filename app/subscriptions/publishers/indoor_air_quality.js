@@ -40,9 +40,17 @@ if (process.env.NODE_ENV === 'production') {
       {
         indoorAirQuality: {
           createdAt: Date.now(),
-          pm10: Math.round(mockValue / 10),
-          pm25: Math.round(mockValue / 2),
-          pm100: mockValue,
+          rawTemperature: 24.0 + mockValue / 100,
+          pressure: 1 + mockValue / 100,
+          rawHumidity: mockValue,
+          gasResistance: mockValue,
+          iaq: mockValue,
+          iaqAccuracy: 3,
+          temperature: mockValue,
+          humidity: mockValue,
+          staticIaq: mockValue,
+          CO2: 400 + mockValue,
+          breathVOC: mockValue / 100,
         },
       },
     );
