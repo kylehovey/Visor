@@ -1,5 +1,6 @@
 const models = require('../../models');
 const { pubsub, topics } = require('..');
+const { client, sensors } = require('../mqtt');
 
 const window = Number.parseInt(
   process.env.IAQ_AVERAGE_WINDOW,
@@ -31,6 +32,11 @@ const stow = () => {
     ...average,
     createdAt: lastTime,
   });
+
+  client.publish(sensors.voc.stateTopic, JSON.stringify({
+    voc: +average.breathVOC.toFixed(2),
+    iaq: +average.staticIaq.toFixed(2),
+  }));
 
   average = init;
   samples = 0;

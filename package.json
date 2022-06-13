@@ -27,6 +27,7 @@
     "graphql": "^14.0.0",
     "graphql-subscriptions": "^1.1.0",
     "morgan": "^1.10.0",
+    "mqtt": "^4.3.7",
     "node-tradfri-client": "^3.0.1",
     "pg": "^8.5.1",
     "pg-hstore": "^2.3.3",

@@ -1,5 +1,6 @@
 const models = require('../../models');
 const { pubsub, topics } = require('..');
+const { client, sensors } = require('../mqtt');
 
 const window = Number.parseInt(
   process.env.PARTICULATE_AVERAGE_WINDOW,
@@ -25,6 +26,8 @@ const stow = () => {
     pm100: Math.round(pm100),
     createdAt: lastTime,
   });
+
+  client.publish(sensors.pm25.stateTopic, JSON.stringify({ pm1: pm10, pm25, pm10: pm100 }));
 
   average = init;
   samples = 0;
