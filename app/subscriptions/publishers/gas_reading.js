@@ -5,7 +5,7 @@ const { pubsub, topics } = require('..');
 
 if (process.env.NODE_ENV === 'production') {
   const serialPath = process.env.GAS_READING_SERIAL_PATH;
-  const serialPort = new SerialPort(serialPath, { baudRate: 115200 });
+  const serialPort = new SerialPort(serialPath, { baudRate: 9600 });
 
   const parser = new Readline();
   serialPort.pipe(parser);
@@ -15,7 +15,9 @@ if (process.env.NODE_ENV === 'production') {
       const packet = JSON.parse(data);
 
       if (packet.carbonDioxide === 0) {
-        throw new Error('Initial reading, discarding.');
+        console.warn('Initial reading, discarding.');
+
+        return;
       }
 
       pubsub.publish(
